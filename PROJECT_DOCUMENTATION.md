@@ -1,52 +1,74 @@
-# **Table of Contents** {#table-of-contents}
+# **Table of Contents**
 
-[Table of Contents](#table-of-contents)
+- [Table of Contents](#table-of-contents)
 
-[Road Map: Credit Agreement](#road-map-credit-agreement)
+- [Road Map: Credit Agreement](#road-map-credit-agreement)
 
-[Stage 1: Sketch Solution for Specific Example - Hallador](#stage-1-sketch-solution-for-specific-example-hallador)
+- [Stage 1: Sketch Solution for Specific Example - Hallador](#stage-1-sketch-solution-for-specific-example-hallador)
+  - [Overview of Pipeline](#overview-of-pipeline)
+  - [Phase 0](#phase-0)
+    - [Ingestion & Structural Slicing (The Python Chunker)](#ingestion-structural-slicing-the-python-chunker)
+  - [Phase 1](#phase-1)
+    - [The Tier 1 Deterministic Router](#the-tier-1-deterministic-router)
+    - [The Extraction Agents](#the-extraction-agents)
+  - [Phase 2](#phase-2)
+    - [The Deterministic Glossary Engine](#the-deterministic-glossary-engine)
+    - [The Multi-Hop Relational Compiler](#the-multi-hop-relational-compiler)
+  - [Phase 3](#phase-3)
+    - [The Automated Integrity Auditor](#the-automated-integrity-auditor)
+    - [The Exception Layer: Validation Agent](#the-exception-layer-validation-agent)
+    - [The Covenant Viewer](#the-covenant-viewer)
+    - [Diagram Node Legend](#diagram-node-legend)
 
-[Overview of Pipeline](#overview-of-pipeline)
+- [Stage 0: The Real-World Problem](#stage-0-the-real-world-problem)
+  - [The Process](#the-process)
+  - [Abrigo](#abrigo)
+  - [Credit Risk Functions](#credit-risk-functions)
+  - [Risk Analyst](#risk-analyst)
+  - [Covenants](#covenants)
+    - [The MVP Covenant Target List](#the-mvp-covenant-target-list)
+    - [Other Covenants](#other-covenants)
+  - [Documents](#documents)
+    - [Credit Agreements](#credit-agreements)
 
-[Phase 0 - Ingestion & Structural Slicing](#ingestion-structural-slicing-the-python-chunker)
+- [Stage 2: Technical Implementation](#stage-2-technical-implementation)
+  - [Package Layout](#package-layout)
+  - [PDF Chunker Guide](#pdf-chunker-guide)
+    - [Deterministic Bounding Box Pipeline: EDGAR PDF Extraction](#deterministic-bounding-box-pipeline-edgar-pdf-extraction)
+    - [Result and Architectural Overview](#result-and-architectural-overview)
+    - [Step-by-Step Documentation & Reasoning](#step-by-step-documentation-reasoning)
+  - [Multi-Tier Deterministic Routing Pipeline](#multi-tier-deterministic-routing-pipeline)
+    - [System Overview](#system-overview)
+    - [Part 1: Tier 1 (Deterministic Matrix Router)](#part-1-tier-1-deterministic-matrix-router)
+    - [Part 2: Advanced Pipeline Logic & Edge Cases](#part-2-advanced-pipeline-logic-edge-cases)
+  - [Agent Covenant Extraction Architecture Documentation](#agent-covenant-extraction-architecture-documentation)
+  - [Pipeline Phase 2: Deterministic Glossary Engine](#pipeline-phase-2-deterministic-glossary-engine)
+  - [Pipeline Node I: Multihop Relational Compiler](#pipeline-node-i-multihop-relational-compiler)
+  - [Pipeline Phase 3: Automated Integrity Auditor](#pipeline-phase-3-automated-integrity-auditor)
+  - [Node L Validation Agent](#node-l-validation-agent)
+  - [Orchestration & CLI](#orchestration-cli)
+    - [Programmatic API](#programmatic-api)
+    - [CLI Entry Point](#cli-entry-point)
+    - [PipelinePaths Artifact Constants](#pipelinepaths-artifact-constants)
+    - [Final Payload Structure (final_compiled_payload_audited.json)](#final-payload-structure-final-compiled-payload-auditedjson)
+  - [Frontend UI](#frontend-ui)
+    - [Module 1: Dependencies and Environment Setup](#module-1-dependencies-and-environment-setup)
+    - [Module 2: Backend API (FastAPI)](#module-2-backend-api-fastapi)
+    - [Module 3: Application State (useState)](#module-3-application-state-usestate)
+    - [Module 4: Backend Initialization (useEffect)](#module-4-backend-initialization-useeffect)
+    - [Module 5: Data Transformation Engine (useMemo)](#module-5-data-transformation-engine-usememo)
+    - [Module 6: Presentation Helpers](#module-6-presentation-helpers)
+    - [Module 7: UI Layout](#module-7-ui-layout)
+    - [Launch](#launch)
+  - [HTML Audit Report](#html-audit-report)
 
-[Phase 1 - Tier 1 Router & Extraction Agents](#phase-1)
+- [Future Roadmap (Not Yet Implemented)](#future-roadmap-not-yet-implemented)
 
-[Phase 2 - Glossary Engine & Relational Compiler](#phase-2)
+- [Appendix](#appendix)
+  - [The Actor-Critic Validation Paradigm](#the-actor-critic-validation-paradigm)
+    - [Application to the Credit Agreement Pipeline](#application-to-the-credit-agreement-pipeline)
 
-[Phase 3 - Integrity Auditor & Validation Agent](#phase-3)
-
-[Diagram Node Legend](#diagram-node-legend)
-
-[Stage 0: The Real-World Problem](#stage-0-the-real-world-problem)
-
-[The MVP Covenant Target List](#the-mvp-covenant-target-list)
-
-[Stage 2: Technical Implementation](#stage-2-technical-implementation)
-
-[PDF Chunker Guide](#pdf-chunker-guide)
-
-[Multi-Tier Deterministic Routing Pipeline](#multi-tier-deterministic-routing-pipeline)
-
-[Agent Covenant Extraction Architecture](#agent-covenant-extraction-architecture-documentation)
-
-[Pipeline Phase 2: Deterministic Glossary Engine](#pipeline-phase-2-deterministic-glossary-engine)
-
-[Pipeline Node I: Multihop Relational Compiler](#pipeline-node-i-multihop-relational-compiler)
-
-[Pipeline Phase 3: Automated Integrity Auditor](#pipeline-phase-3-automated-integrity-auditor)
-
-[Node L Validation Agent](#node-l-validation-agent)
-
-[Orchestration & CLI](#orchestration-cli)
-
-[Frontend UI](#frontend-ui)
-
-[Future Roadmap (Not Yet Implemented)](#future-roadmap-not-yet-implemented)
-
-[Appendix - Actor-Critic Validation Paradigm](#the-actor-critic-validation-paradigm)
-
-# **Road Map: Credit Agreement** {#road-map-credit-agreement}
+# **Road Map: Credit Agreement**
 
 **Stage 0: Learning the Real-World Environment and Problem**
 
@@ -75,9 +97,9 @@
 
 * Abrigo / core banking integration, batch processing, governance
 
-# **Stage 1: Sketch Solution for Specific Example - Hallador** {#stage-1-sketch-solution-for-specific-example-hallador}
+# **Stage 1: Sketch Solution for Specific Example - Hallador**
 
-## **Overview of Pipeline** {#overview-of-pipeline}
+## **Overview of Pipeline**
 
 The refactored pipeline runs stages in this order (see `covenant_pipeline/orchestrator.py`):
 
@@ -120,23 +142,23 @@ flowchart TD
     PDF --> VIEWER
 ```
 
-## **Phase 0** {#phase-0}
+## **Phase 0**
 
-### **Ingestion & Structural Slicing (The Python Chunker)** {#ingestion-structural-slicing-the-python-chunker}
+### **Ingestion & Structural Slicing (The Python Chunker)**
 
 * **The Problem:** Feeding an entire 150-page PDF to an LLM causes token saturation, high API latency, and output truncation. Furthermore, unstructured text cannot be audited.
 * **The Execution:** `covenant_pipeline/phases/chunker.py` deterministically slices the PDF using structural boundaries, physically isolating Article 1 (Definitions) from Article X (Covenants). The chunker attaches an immutable metadata payload (Article Name, Section Number, Page Number, and raw source text) to every chunk.
 * **The Result:** Agents ingest strictly bounded, highly relevant text blocks that are permanently tethered to their physical location in the original document, which propagates as a high-resolution `Receipt` through the entire pipeline.
 
-## **Phase 1** {#phase-1}
+## **Phase 1**
 
-### **The Tier 1 Deterministic Router** {#the-tier-1-deterministic-router}
+### **The Tier 1 Deterministic Router**
 
 * **The Problem:** Relying on generative LLMs to classify raw legal text is cost-prohibitive and slow, while naive string searches trigger false positives (cross-references) and fail when multiple distinct covenants are compressed into single paragraphs.
 * **The Execution:** `covenant_pipeline/phases/router.py` evaluates each covenant rule in `config/covenant_config.json` independently against the phase 1 payload CSV using vectorized Pandas boolean masks: Article zone gate, section title regex, body blacklist, and minimum text density.
 * **The Result:** When exactly one chunk matches a rule, a structured extraction envelope is appended to `dispatch_queue_output.json`. Zero or multiple matches log a Tier 2 cascade message (Tier 2 is not yet implemented — see Future Roadmap).
 
-### **The Extraction Agents** {#the-extraction-agents}
+### **The Extraction Agents**
 
 * **The Problem:** Generative extraction is prone to dropped clauses, hallucinated pointers, and the loss of data provenance (the "black box" problem).
 * **The Execution:** `covenant_pipeline/phases/extraction.py` iterates the dispatch queue and calls Gemini with schema-constrained JSON output (`temperature=0.0`). Each result includes `Receipt`, `Agent`, `Extracted_Data`, and `Cost_Metrics`.
@@ -144,41 +166,41 @@ flowchart TD
 
 **Note:** The current PoC uses a **single** extraction pass per envelope. Parallel agents and a Rater Agent are planned but not implemented (see Future Roadmap).
 
-## **Phase 2** {#phase-2}
+## **Phase 2**
 
-### **The Deterministic Glossary Engine** {#the-deterministic-glossary-engine}
+### **The Deterministic Glossary Engine**
 
 * **The Problem:** Extracting a 300+ term glossary using an LLM on-demand is computationally expensive, slow, and prone to hallucinated text or missed dependencies.
 * **The Execution:** `covenant_pipeline/phases/glossary.py` executes a single sweep of isolated Article 1 text using regex targeting `"Term" means...` formatting, then maps nested references deterministically.
 * **The Result:** Generates `resolved_definitions.json` containing raw text and explicitly nested references for every term, with zero API cost.
 
-### **The Multi-Hop Relational Compiler** {#the-multi-hop-relational-compiler}
+### **The Multi-Hop Relational Compiler**
 
 * **The Problem:** LLM extraction outputs probabilistic placeholder tags (e.g., `[$REF: Permitted Acquisitions]`). Because LLMs hallucinate plurals and standard formatting, strict string matching fails when linking to the deterministic glossary.
 * **The Execution:** `covenant_pipeline/phases/compiler.py` (`MultiHopRelationalCompiler`) recursively traverses Phase 1 JSON and resolves `[$REF: Term]` tags via exact match, TOC section injection, plural stripping, and fuzzy `difflib` matching.
 * **The Result:** Merges Phase 1 math and Phase 2 dictionary into `final_compiled_payload.json` with `Document_Metadata`, `Phase1_Extracted_Covenants`, and `Phase2_Master_Glossary`.
 
-## **Phase 3** {#phase-3}
+## **Phase 3**
 
-### **The Automated Integrity Auditor** {#the-automated-integrity-auditor}
+### **The Automated Integrity Auditor**
 
 * **The Problem:** Compiling a flat relational database from highly interconnected legal text introduces vulnerabilities such as circular references and dangling pointers.
 * **The Execution:** `covenant_pipeline/phases/audit.py` runs three sequential tests: circular reference DFS (with memoization), dangling pointer sweep, and numeric type validation on limit fields. Updates `final_compiled_payload.json` in place.
 * **The Result:** Appends diagnostic metadata to `Document_Metadata.Warnings` so downstream systems can process valid math while flagging logical flaws.
 
-### **The Exception Layer: Validation Agent** {#the-exception-layer-validation-agent}
+### **The Exception Layer: Validation Agent**
 
 * **The Problem:** "Silent" hallucinations can pass strict Pydantic typing (e.g., extracting 1.25 instead of 1.50) but remain factually wrong.
 * **The Execution:** `covenant_pipeline/phases/validation.py` rehydrates source text from CSV receipts and runs an LLM-as-a-Judge (`AUDITOR_SYSTEM_PROMPT`) per covenant. Does not overwrite extracted data; appends `Validation_Audit`.
 * **The Result:** Writes `final_compiled_payload_audited.json` with confidence scores and flagged discrepancies for human review.
 
-### **The Covenant Viewer** {#the-covenant-viewer}
+### **The Covenant Viewer**
 
 * **The Problem:** Human risk analysts cannot trust black-box AI outputs without verifying the source, but manually searching a 150-page PDF defeats the purpose of automation.
 * **The Execution:** FastAPI backend (`viewer/backend/main.py`) serves audited JSON and the source PDF; React frontend (`viewer/frontend/src/App.jsx`) displays extracted math, validation flags, PDF page ranges, and glossary drill-down.
 * **The Result:** Analysts verify AI logic against source clauses in seconds. Launch via `covenant-pipeline serve` or `covenant-pipeline run --serve-ui`.
 
-### **Diagram Node Legend** {#diagram-node-legend}
+### **Diagram Node Legend**
 
 * **Node A:** Raw PDF ingestion (`--pdf`)
 * **Node B:** Python Document Chunker — `final_spatial_map.csv`, `final_extracted_covenants.csv`, `final_extracted_covenants_phase1_payload.csv`
@@ -191,29 +213,29 @@ flowchart TD
 * **Node L:** Validation Agent / LLM-as-a-Judge — `final_compiled_payload_audited.json`
 * **Node M:** Covenant Viewer — `http://localhost:5173`
 
-# **Stage 0: The Real-World Problem** {#stage-0-the-real-world-problem}
+# **Stage 0: The Real-World Problem**
 
-## **The Process** {#the-process}
+## **The Process**
 
 Credit agreements flow from origination through ongoing monitoring. Risk teams must track whether borrowers remain in compliance with financial and operational covenants — leverage ratios, coverage tests, spending caps, reporting deadlines, and negative covenant baskets. Today much of this work is manual: analysts read PDFs, key limits into systems, and set ticklers for reporting dates.
 
-## **Abrigo** {#abrigo}
+## **Abrigo**
 
 Abrigo (and similar platforms) is a common system of record for covenant monitoring in community and regional banks. The pipeline's long-term goal is to produce structured, auditable covenant data that could feed such systems — but **enterprise integration is not implemented in this PoC**.
 
-## **Credit Risk Functions** {#credit-risk-functions}
+## **Credit Risk Functions**
 
 Credit risk teams monitor portfolio health, classify credits, and escalate breaches. Covenant extraction is a foundational input: without accurate limits and definitions, downstream risk scoring and exception reporting fail.
 
-## **Risk Analyst** {#risk-analyst}
+## **Risk Analyst**
 
 The primary user of this PoC is the risk analyst who must verify that AI-extracted covenant math matches the source agreement. The Covenant Viewer is designed for this workflow: side-by-side PDF provenance, extracted JSON, and glossary resolution.
 
-## **Covenants** {#covenants}
+## **Covenants**
 
 Each target covenant below maps to an agent in `config/covenant_config.json` and a Pydantic schema in `covenant_pipeline/schemas/covenants.py` via `SCHEMA_ROUTER`.
 
-### **The MVP Covenant Target List** {#the-mvp-covenant-target-list}
+### **The MVP Covenant Target List**
 
 **1. Maximum Consolidated Total Leverage Ratio** (`TotalLeverageRatio`)
 
@@ -230,7 +252,7 @@ Each target covenant below maps to an agent in `config/covenant_config.json` and
 * **What it is:** A hard cap on annual spend on physical assets.
 * **Why it tests the pipeline:** Proves dollar-limit extraction (e.g., `$15,000,000`) and terms like `[$REF: Permitted Capital Expenditures]`.
 
-### **Other Covenants** {#other-covenants}
+### **Other Covenants**
 
 **1. Conditional Logic: Restricted Payments (Section 7.4)** (`RestrictedPayments`)
 
@@ -260,15 +282,15 @@ Each target covenant below maps to an agent in `config/covenant_config.json` and
 
 * Negative covenant exception lists using the shared `UnifiedExceptions` schema.
 
-## **Documents** {#documents}
+## **Documents**
 
-### **Credit Agreements** {#credit-agreements}
+### **Credit Agreements**
 
 The PoC default sample is `Credit_Agreement_Hallador.pdf`. EDGAR-style HTML-to-PDF agreements are the primary design target; the chunker handles printed-page vs absolute-page mapping for this format.
 
-# **Stage 2: Technical Implementation** {#stage-2-technical-implementation}
+# **Stage 2: Technical Implementation**
 
-## **Package Layout** {#package-layout}
+## **Package Layout**
 
 ```
 covenant_pipeline/
@@ -305,9 +327,9 @@ config/
 └── covenant_config.json # Routing rules
 ```
 
-## **PDF Chunker Guide** {#pdf-chunker-guide}
+## **PDF Chunker Guide**
 
-### **Deterministic Bounding Box Pipeline: EDGAR PDF Extraction** {#deterministic-bounding-box-pipeline-edgar-pdf-extraction}
+### **Deterministic Bounding Box Pipeline: EDGAR PDF Extraction**
 
 #### **Architecture Overview**
 
@@ -344,13 +366,13 @@ The pipeline decouples logical index extraction (TOC) from physical spatial mapp
 
 #### **Module 4: Pass 3 - Production Extraction Engine (`run_extraction_engine`)**
 
-### **Result and Architectural Overview** {#result-and-architectural-overview}
+### **Result and Architectural Overview**
 
 **Result:** Pass 3 ingests the spatial map, calculates `Printed_End_Page` via `calculate_printed_end_page`, extracts section text with a state machine, sanitizes footers, and exports Silver (master audit) and Gold (LLM payload) CSV layers.
 
 **Architectural Overview:** Text utilities (`utils/text.py`) are decoupled from the PyMuPDF extraction loop. Medallion-style output preserves `Raw_Text_Unscrubbed` in `final_extracted_covenants.csv` while `final_extracted_covenants_phase1_payload.csv` drops unscrubbed columns for downstream LLM stages.
 
-### **Step-by-Step Documentation & Reasoning** {#step-by-step-documentation-reasoning}
+### **Step-by-Step Documentation & Reasoning**
 
 #### **Text Utilities (`utils/text.py`)**
 
@@ -376,13 +398,13 @@ The pipeline decouples logical index extraction (TOC) from physical spatial mapp
 * **What it does:** Sequences Pass 1 → 1.5 → 2 → 3 via `build_simplified_skeleton`, `build_page_spread_map`, `calculate_exact_boundaries`, `run_extraction_engine`.
 * **Why it's there:** Single entry point for Phase 0; all paths resolved through `PipelinePaths`.
 
-## **Multi-Tier Deterministic Routing Pipeline** {#multi-tier-deterministic-routing-pipeline}
+## **Multi-Tier Deterministic Routing Pipeline**
 
-### **System Overview** {#system-overview}
+### **System Overview**
 
 Retrieval-augmented routing isolates precise text chunks before generative LLM extraction. **Only Tier 1 is implemented** in the refactored codebase.
 
-### **Part 1: Tier 1 (Deterministic Matrix Router)** {#part-1-tier-1-deterministic-matrix-router}
+### **Part 1: Tier 1 (Deterministic Matrix Router)**
 
 **Module:** `covenant_pipeline/phases/router.py` — `Tier1DeterministicRouter`
 
@@ -425,7 +447,7 @@ Retrieval-augmented routing isolates precise text chunks before generative LLM e
 
 **Reasoning:** Translates tabular chunks into isolated LLM payloads with audit receipts.
 
-### **Part 2: Advanced Pipeline Logic & Edge Cases** {#part-2-advanced-pipeline-logic-edge-cases}
+### **Part 2: Advanced Pipeline Logic & Edge Cases**
 
 #### **Independent Target Pools (Multi-Covenant Sections)**
 
@@ -439,7 +461,7 @@ Retrieval-augmented routing isolates precise text chunks before generative LLM e
 
 **Mechanism:** Logs `[target] Tier 1 Failed` or `Tier 1 Ambiguity` and prints "Cascading to Tier 2 Vector Search..." — **no envelope is created**. Tier 2 is not implemented.
 
-## **Agent Covenant Extraction Architecture Documentation** {#agent-covenant-extraction-architecture-documentation}
+## **Agent Covenant Extraction Architecture Documentation**
 
 **Module:** `covenant_pipeline/phases/extraction.py`
 
@@ -499,7 +521,7 @@ Retrieval-augmented routing isolates precise text chunks before generative LLM e
 
 **Deviation from legacy:** Single pass at `temperature=0.0`. No parallel agents or Rater Agent.
 
-## **Pipeline Phase 2: Deterministic Glossary Engine** {#pipeline-phase-2-deterministic-glossary-engine}
+## **Pipeline Phase 2: Deterministic Glossary Engine**
 
 **Module:** `covenant_pipeline/phases/glossary.py`
 
@@ -515,7 +537,7 @@ Retrieval-augmented routing isolates precise text chunks before generative LLM e
   * **What it does:** Filters CSV rows where `Article` contains "Article 1", concatenates `Raw_Text`, writes `resolved_definitions.json`.
   * **Why it's there:** Restricts dictionary building to the definitions article only.
 
-## **Pipeline Node I: Multihop Relational Compiler** {#pipeline-node-i-multihop-relational-compiler}
+## **Pipeline Node I: Multihop Relational Compiler**
 
 **Module:** `covenant_pipeline/phases/compiler.py` — `MultiHopRelationalCompiler`
 
@@ -533,7 +555,7 @@ Retrieval-augmented routing isolates precise text chunks before generative LLM e
 * **`_traverse_and_mutate`:** Recursive visitor replaces `[$REF: raw]` with `[$REF: resolved]` in all nested strings.
 * **`compile`:** Writes `final_compiled_payload.json` with `Document_Metadata`, `Phase1_Extracted_Covenants`, `Phase2_Master_Glossary`.
 
-## **Pipeline Phase 3: Automated Integrity Auditor** {#pipeline-phase-3-automated-integrity-auditor}
+## **Pipeline Phase 3: Automated Integrity Auditor**
 
 **Module:** `covenant_pipeline/phases/audit.py` — `run_database_audit`
 
@@ -547,7 +569,7 @@ Retrieval-augmented routing isolates precise text chunks before generative LLM e
 
 **Note:** Mutates `final_compiled_payload.json` in place. Validation writes a separate `final_compiled_payload_audited.json`.
 
-## **Node L Validation Agent** {#node-l-validation-agent}
+## **Node L Validation Agent**
 
 **Module:** `covenant_pipeline/phases/validation.py`
 
@@ -569,7 +591,7 @@ Retrieval-augmented routing isolates precise text chunks before generative LLM e
 * **`run_validation_pipeline`:** Iterates covenants, skips empty quantitative payloads, appends `Validation_Audit`, sleeps `rate_limit_seconds` between calls.
 * **Output:** `final_compiled_payload_audited.json`
 
-## **Orchestration & CLI** {#orchestration-cli}
+## **Orchestration & CLI**
 
 **Modules:** `orchestrator.py`, `cli.py`, `config.py`
 
@@ -637,7 +659,7 @@ Installed as `covenant-pipeline` via `pyproject.toml` → `covenant_pipeline.cli
 }
 ```
 
-## **Frontend UI** {#frontend-ui}
+## **Frontend UI**
 
 **Modules:** `viewer/backend/main.py`, `viewer/frontend/src/App.jsx`, `covenant_pipeline/viewer.py`
 
@@ -701,7 +723,7 @@ covenant-pipeline run --pdf agreement.pdf --serve-ui
 * Backend: `uvicorn main:app` on `http://127.0.0.1:8000`
 * Frontend: `npm run dev` on `http://localhost:5173`
 
-## **HTML Audit Report** {#html-audit-report}
+## **HTML Audit Report**
 
 **Modules:** `covenant_pipeline/report/html_report.py`, `covenant_pipeline/report/formatters.py`, `covenant_pipeline/report/pdf_images.py`, `covenant_pipeline/report/summary.py`
 
@@ -716,7 +738,7 @@ After a full pipeline run (through `validate`), the pipeline writes a self-conta
 
 **Shared logic:** `build_pipeline_summary()` in `covenant_pipeline/report/summary.py` is used by both the HTML report and the viewer API (`GET /api/pipeline-summary`).
 
-# **Future Roadmap (Not Yet Implemented)** {#future-roadmap-not-yet-implemented}
+# **Future Roadmap (Not Yet Implemented)**
 
 The following features appear in legacy documentation or router log messages but are **not present** in the refactored codebase:
 
@@ -731,9 +753,9 @@ The following features appear in legacy documentation or router log messages but
 
 When Tier 2/3 are built, routing should follow the legacy **cascade** model: on Tier 1 failure, search the full unassigned pool for that article zone — not a funnel of "closest" Tier 1 guesses.
 
-# **Appendix** {#appendix}
+# **Appendix**
 
-## **The Actor-Critic Validation Paradigm** {#the-actor-critic-validation-paradigm}
+## **The Actor-Critic Validation Paradigm**
 
 **Reference:** [Advancing Mathematics Research with AI-Driven Formal Proof Search](https://arxiv.org/html/2605.22763v1), May 2026, Google DeepMind
 
@@ -750,7 +772,7 @@ When Tier 2/3 are built, routing should follow the legacy **cascade** model: on 
 * **Mechanism:** A separate LLM compares extracted JSON to raw receipt text (`validation.py`, `AUDITOR_SYSTEM_PROMPT`).
 * **Reasoning:** LLMs often evaluate existing text more reliably than they generate correct structured output from scratch.
 
-### **Application to the Credit Agreement Pipeline** {#application-to-the-credit-agreement-pipeline}
+### **Application to the Credit Agreement Pipeline**
 
 | Layer | Legacy vision | Current implementation |
 |-------|---------------|------------------------|
