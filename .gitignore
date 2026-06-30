@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.docker.example
 
 # Python
 __pycache__/
@@ -21,4 +22,5 @@ node_modules/
 
 # Pipeline outputs (optional local runs)
 out/
+data/
 *.log

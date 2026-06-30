@@ -327,6 +327,8 @@ config/
 └── covenant_config.json # Routing rules
 ```
 
+**Infrastructure (Docker):** See [Docker_Documentation.md](Docker_Documentation.md) for container images, Compose orchestration, and volume/env contracts.
+
 ## **PDF Chunker Guide**
 
 ### **Deterministic Bounding Box Pipeline: EDGAR PDF Extraction**
@@ -739,6 +741,8 @@ After a full pipeline run (through `validate`), the pipeline writes a self-conta
 **Shared logic:** `build_pipeline_summary()` in `covenant_pipeline/report/summary.py` is used by both the HTML report and the viewer API (`GET /api/pipeline-summary`).
 
 # **Future Roadmap (Not Yet Implemented)**
+
+**Infrastructure:** Local Docker containerization (Phase 1) is implemented — see [Docker_Documentation.md](Docker_Documentation.md). Cloud registry, Terraform, and CI/CD remain on the platform engineering roadmap ([docs/platform-engineering/Platform Engineering Roadmap.md](docs/platform-engineering/Platform%20Engineering%20Roadmap.md)).
 
 The following features appear in legacy documentation or router log messages but are **not present** in the refactored codebase:
 
