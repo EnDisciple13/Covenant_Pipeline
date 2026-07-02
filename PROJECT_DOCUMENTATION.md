@@ -72,20 +72,28 @@
 
 # **Related Notes**
 
-Conceptual context for this pipeline lives in the companion `notes` repo (open it alongside this repo in the Cursor multi-root workspace). These links resolve locally; they do not render on GitHub since the repos publish separately.
+Conceptual context for this pipeline lives in the companion `notes` repo (open it alongside this repo in the Cursor multi-root workspace). Project-specific platform-engineering docs are **mirrored** into `docs/platform-engineering/` (auto-synced from `notes`; see [docs/platform-engineering/README.md](docs/platform-engineering/README.md)), so they resolve locally and on GitHub. Reusable meta/math theory stays in `notes` only.
+
+Mirrored here (project-specific strategy):
+
+- [docs/platform-engineering/PE_Roadmap_1.md](docs/platform-engineering/PE_Roadmap_1.md) — M1 platform engineering roadmap (Phases 1–4).
+- [docs/platform-engineering/PE_Roadmap_M2.md](docs/platform-engineering/PE_Roadmap_M2.md) — M2 IDP vision (generalize beyond CA pipeline).
+- [docs/platform-engineering/blueprints/PE_RM_Phase1.md](docs/platform-engineering/blueprints/PE_RM_Phase1.md) — Phase 1 containerization blueprint.
+- [docs/platform-engineering/blueprints/PE_RM_Phase2.md](docs/platform-engineering/blueprints/PE_RM_Phase2.md) — Phase 2 cloud topology blueprint.
+- [docs/platform-engineering/blueprints/PE_RM_Phase3.md](docs/platform-engineering/blueprints/PE_RM_Phase3.md) — Phase 3 Terraform blueprint.
+- [docs/platform-engineering/blueprints/PE_RM_Phase4.md](docs/platform-engineering/blueprints/PE_RM_Phase4.md) — Phase 4 CI/CD blueprint.
+- [docs/platform-engineering/math/Math_Application_Pipeline.md](docs/platform-engineering/math/Math_Application_Pipeline.md) — category-theoretic foundations of the application pipeline.
+
+Notes-only (reusable theory, resolve in the multi-root workspace):
 
 - [notes/meta/Meta_Workflow.md](../notes/meta/Meta_Workflow.md) — canonical 0-4 Centaur meta-workflow.
 - [notes/meta/Layer4_TypeB_Auditing.md](../notes/meta/Layer4_TypeB_Auditing.md) — Type B auditing and invariants (relevant to the integrity auditor and Pydantic gates).
 - [notes/math/Math_Containerization.md](../notes/math/Math_Containerization.md) — categorical foundations of containerization.
 - [notes/math/Math_Notes_Platform_Engineer.md](../notes/math/Math_Notes_Platform_Engineer.md) — platform engineering math (IaC, CI/CD, orchestration).
-- [notes/projects/covenant/PE_Roadmap_1.md](../notes/projects/covenant/PE_Roadmap_1.md) — M1 platform engineering roadmap (Phases 1–4).
-- [notes/projects/covenant/PE_Roadmap_M2.md](../notes/projects/covenant/PE_Roadmap_M2.md) — M2 IDP vision (generalize beyond CA pipeline).
-- [notes/projects/covenant/PE_RM_Phase1.md](../notes/projects/covenant/PE_RM_Phase1.md) — Phase 1 containerization blueprint.
-- [notes/projects/covenant/PE_RM_Phase2.md](../notes/projects/covenant/PE_RM_Phase2.md) — Phase 2 cloud topology blueprint.
-- [notes/projects/covenant/PE_RM_Phase3.md](../notes/projects/covenant/PE_RM_Phase3.md) — Phase 3 Terraform blueprint.
-- [notes/projects/covenant/PE_RM_Phase4.md](../notes/projects/covenant/PE_RM_Phase4.md) — Phase 4 CI/CD blueprint.
-- [notes/projects/covenant/Math_Application_Pipeline.md](../notes/projects/covenant/Math_Application_Pipeline.md) — category-theoretic foundations of the application pipeline.
 - [notes/projects/covenant/README.md](../notes/projects/covenant/README.md) — project note index.
+
+Implementation (this repo):
+
 - [Docker_Documentation.md](Docker_Documentation.md) — Phase 1 Docker implementation (as-built).
 - [docs/platform-engineering/README.md](docs/platform-engineering/README.md) — platform engineering doc index.
 
@@ -765,7 +773,7 @@ After a full pipeline run (through `validate`), the pipeline writes a self-conta
 
 # **Future Roadmap (Not Yet Implemented)**
 
-**Infrastructure:** Local Docker containerization (Phase 1) is implemented — see [Docker_Documentation.md](Docker_Documentation.md). Cloud registry, Terraform, and CI/CD remain on the platform engineering roadmap ([notes/projects/covenant/PE_Roadmap_1.md](../notes/projects/covenant/PE_Roadmap_1.md)).
+**Infrastructure:** Local Docker containerization (Phase 1) is implemented — see [Docker_Documentation.md](Docker_Documentation.md). Cloud registry, Terraform, and CI/CD remain on the platform engineering roadmap ([docs/platform-engineering/PE_Roadmap_1.md](docs/platform-engineering/PE_Roadmap_1.md)).
 
 The following features appear in legacy documentation or router log messages but are **not present** in the refactored codebase:
 
