@@ -1,6 +1,6 @@
 # Reading the Pipeline Code: Personal Learning Notes
 
-Personal learning notes for reading the application layer in this repository. These notes bridge abstract theory ([Math for the Application Pipeline.md](../math/Math%20for%20the%20Application%20Pipeline.md)), operational reference ([PROJECT_DOCUMENTATION.md](../../../PROJECT_DOCUMENTATION.md)), and the infrastructure walkthrough ([Reading the Docker Code.md](Reading%20the%20Docker%20Code.md)) into a line-by-line code walkthrough of `covenant_pipeline/`.
+Personal learning notes for reading the application layer in this repository. These notes bridge abstract theory ([Math_Application_Pipeline.md](../../../notes/projects/covenant/Math_Application_Pipeline.md)), operational reference ([PROJECT_DOCUMENTATION.md](../../../PROJECT_DOCUMENTATION.md)), and the infrastructure walkthrough ([Reading the Docker Code.md](Reading%20the%20Docker%20Code.md)) into a line-by-line code walkthrough of `covenant_pipeline/`.
 
 **Audience:** You read Python comfortably; the credit-agreement extraction pipeline is new.
 
@@ -65,7 +65,7 @@ $$P : D \times X_{\text{in}} \to Y$$
 
 where $Y$ is `final_compiled_payload_audited.json` — structured covenants, master glossary, metadata, and per-covenant validation audits.
 
-Decomposition into phase morphisms (see [Math for the Application Pipeline.md](../math/Math%20for%20the%20Application%20Pipeline.md)):
+Decomposition into phase morphisms (see [Math_Application_Pipeline.md](../../../notes/projects/covenant/Math_Application_Pipeline.md)):
 
 $$P_{\text{full}} = f_{\text{validate}} \circ f_{\text{audit}} \circ f_{\text{compile}} \circ f_{\text{extract}} \circ f_{\text{glossary}} \circ f_{\text{route}} \circ f_{\text{chunk}}$$
 
@@ -1245,11 +1245,11 @@ Sections 0, 2, 4, 7, 8 fill in theory and edge cases. Section 2 is essential whe
 
 | Document | Purpose |
 |----------|---------|
-| [Math for the Application Pipeline.md](../math/Math%20for%20the%20Application%20Pipeline.md) | Category-theoretic foundations of $P$ and phase composition |
-| [Math for Containerization.md](../math/Math%20for%20Containerization.md) | $Y^D$, $eval$, internalization |
+| [Math_Application_Pipeline.md](../../../notes/projects/covenant/Math_Application_Pipeline.md) | Category-theoretic foundations of $P$ and phase composition |
+| [Math_Containerization.md](../../../notes/math/Math_Containerization.md) | $Y^D$, $eval$, internalization |
 | [Reading the Docker Code.md](Reading%20the%20Docker%20Code.md) | Infrastructure layer walkthrough |
 | [PROJECT_DOCUMENTATION.md](../../../PROJECT_DOCUMENTATION.md) | Operational architecture reference |
-| [Platform Engineering Roadmap.md](../Platform%20Engineering%20Roadmap.md) | Phases 1–4 overview |
+| [PE_Roadmap_1.md](../../../notes/projects/covenant/PE_Roadmap_1.md) | Phases 1–4 overview |
 | [Docker_Documentation.md](../../../Docker_Documentation.md) | Container ops manual |
 
 ### D. Application ↔ Infrastructure Concept Map

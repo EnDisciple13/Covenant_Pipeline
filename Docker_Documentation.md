@@ -48,7 +48,7 @@ The application layer — deterministic PDF chunking, Gemini extraction, relatio
 
 **The Goal:** Construct the infrastructure layer so the same application runs identically on any host capable of running Docker — and later, on enterprise cloud compute — without polluting the host with application dependencies.
 
-Planning notes for the full platform arc live in [docs/platform-engineering/](docs/platform-engineering/). This document covers **Phase 1 only** (implemented on branch `infra/docker`).
+Planning notes for the full platform arc live in [docs/platform-engineering/](docs/platform-engineering/) and the companion [notes](../notes/projects/covenant/PE_Roadmap_1.md) repo. This document covers **Phase 1 only** (implemented).
 
 | Phase | Status | Summary |
 |-------|--------|---------|
@@ -159,7 +159,7 @@ RUN apt-get update \
 
 **Reasoning:** The `[viewer]` optional extra installs `fastapi` and `uvicorn` alongside core pipeline deps (`pymupdf`, `pandas`, `google-genai`, `pydantic`, `python-dotenv`). Editable install registers the `covenant-pipeline` CLI entry point and makes `covenant_pipeline` importable — required because `/api/pipeline-summary` imports `covenant_pipeline.report.summary` at request time.
 
-**Deviation from blueprint:** [docs/platform-engineering/blueprints/PE_RM_Phase1.md](docs/platform-engineering/blueprints/PE_RM_Phase1.md) specifies `requirements.txt`, which lists only the five core deps and omits FastAPI/uvicorn. Implementation uses `pyproject.toml` as the single source of truth.
+**Deviation from blueprint:** [notes/projects/covenant/PE_RM_Phase1.md](../notes/projects/covenant/PE_RM_Phase1.md) specifies `requirements.txt`, which lists only the five core deps and omits FastAPI/uvicorn. Implementation uses `pyproject.toml` as the single source of truth.
 
 ### **Layer 3: Source Copy**
 
@@ -297,7 +297,7 @@ docker compose --profile pipeline run --rm pipeline
 ## **Prerequisites**
 
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows/macOS) or Docker Engine + Compose (Linux)
-* Git clone of this repo on branch `infra/docker` (or later `main` once merged)
+* Git clone of this repo (`main` branch)
 
 ```bash
 copy .env.docker.example .env.docker    # Windows
@@ -421,7 +421,7 @@ docker compose up --force-recreate backend frontend
 
 # **Future Roadmap (Not Yet Implemented)**
 
-The following platform-engineering phases are planned in [docs/platform-engineering/Platform Engineering Roadmap.md](docs/platform-engineering/Platform%20Engineering%20Roadmap.md) but **not present** in the codebase:
+The following platform-engineering phases are planned in [notes/projects/covenant/PE_Roadmap_1.md](../notes/projects/covenant/PE_Roadmap_1.md) but **not present** in the codebase:
 
 | Feature | Planning reference | Current state |
 |---------|-------------------|---------------|
@@ -433,7 +433,7 @@ The following platform-engineering phases are planned in [docs/platform-engineer
 | GitHub Actions CI workflow | Phase 4 | Not implemented |
 | CI audit gate (`covenant_pipeline/phases/audit.py`) | Phase 4 | Not implemented |
 | Automated image push to registry | Phase 4 | Not implemented |
-| Kubernetes reconciliation loop | Math for Platform Engineer | Not implemented |
+| Kubernetes reconciliation loop | [Math_Notes_Platform_Engineer.md](../notes/math/Math_Notes_Platform_Engineer.md) | Not implemented |
 
 When Phase 2+ are built, images defined in this document become the deployable artifacts pushed to the cloud registry. Compose networking maps to VPC service discovery; the `./data` volume pattern maps to object storage (S3/Blob) or persistent volumes.
 
@@ -445,14 +445,15 @@ When Phase 2+ are built, images defined in this document become the deployable a
 |----------|---------|
 | [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md) | Application-layer architecture, pipeline stages, viewer UI |
 | [README.md](README.md) | Quick start (native and Docker) |
-| [docs/platform-engineering/Platform Engineering Roadmap.md](docs/platform-engineering/Platform%20Engineering%20Roadmap.md) | Full platform engineering arc (Phases 1–4) |
-| [docs/platform-engineering/blueprints/PE_RM_Phase1.md](docs/platform-engineering/blueprints/PE_RM_Phase1.md) | Original Phase 1 blueprint (planning artifact) |
-| [docs/platform-engineering/math/Math for Containerization.md](docs/platform-engineering/math/Math%20for%20Containerization.md) | Category-theoretic framing of Docker images |
-| [docs/platform-engineering/math/Math for Platform Engineer.md](docs/platform-engineering/math/Math%20for%20Platform%20Engineer.md) | IaC, CI/CD, and orchestration math notes |
+| [notes/projects/covenant/PE_Roadmap_1.md](../notes/projects/covenant/PE_Roadmap_1.md) | Full platform engineering arc (Phases 1–4) |
+| [notes/projects/covenant/PE_RM_Phase1.md](../notes/projects/covenant/PE_RM_Phase1.md) | Phase 1 blueprint (planning artifact) |
+| [notes/math/Math_Containerization.md](../notes/math/Math_Containerization.md) | Category-theoretic framing of Docker images |
+| [notes/math/Math_Notes_Platform_Engineer.md](../notes/math/Math_Notes_Platform_Engineer.md) | IaC, CI/CD, and orchestration math notes |
+| [docs/platform-engineering/README.md](docs/platform-engineering/README.md) | PE doc index (local + GitHub links) |
 
 ## **Implementation Deviations from Blueprint**
 
-[docs/platform-engineering/blueprints/PE_RM_Phase1.md](docs/platform-engineering/blueprints/PE_RM_Phase1.md) was the design spec; the implementation on `infra/docker` differs in these ways:
+[notes/projects/covenant/PE_RM_Phase1.md](../notes/projects/covenant/PE_RM_Phase1.md) was the design spec; the implementation differs in these ways:
 
 | Blueprint spec | Actual implementation | Reason |
 |----------------|----------------------|--------|

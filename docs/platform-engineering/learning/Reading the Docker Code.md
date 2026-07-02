@@ -1,6 +1,6 @@
 # Reading the Docker Code: Personal Learning Notes
 
-Personal learning notes for reading the Docker configuration in this repository. These notes bridge abstract theory ([Math for Containerization.md](../math/Math%20for%20Containerization.md)), operational reference ([Docker_Documentation.md](../../../Docker_Documentation.md)), and the Phase 1 blueprint ([PE_RM_Phase1.md](../blueprints/PE_RM_Phase1.md)) into a line-by-line code walkthrough.
+Personal learning notes for reading the Docker configuration in this repository. These notes bridge abstract theory ([Math_Containerization.md](../../../notes/math/Math_Containerization.md)), operational reference ([Docker_Documentation.md](../../../Docker_Documentation.md)), and the Phase 1 blueprint ([PE_RM_Phase1.md](../../../notes/projects/covenant/PE_RM_Phase1.md)) into a line-by-line code walkthrough.
 
 **Audience:** You read Python comfortably; Docker is new.
 
@@ -37,7 +37,7 @@ The Credit Agreement pipeline is complete Python code: chunking, extraction, com
 
 **Docker** packages the application and its dependencies into an **immutable image**. When you **run** the image, you get an isolated **container** process. The host OS stays clean; dependencies live inside the image, not on your machine.
 
-In this repo, Docker is Phase 1 of platform engineering: local containerization before any cloud deployment. See [Platform Engineering Roadmap.md](../Platform%20Engineering%20Roadmap.md).
+In this repo, Docker is Phase 1 of platform engineering: local containerization before any cloud deployment. See [PE_Roadmap_1.md](../../../notes/projects/covenant/PE_Roadmap_1.md).
 
 ### III. Rigorous Mathematical Definition
 
@@ -998,14 +998,14 @@ Sections 0, 1, 4, 7, 8 fill in theory and the full picture. Section 1 is essenti
 
 | Document | Purpose |
 |----------|---------|
-| [Math for Containerization.md](../math/Math%20for%20Containerization.md) | Full category-theoretic foundations of $Y^D$ and $eval$ |
-| [Math for Platform Engineer.md](../math/Math%20for%20Platform%20Engineer.md) | Broader platform math (IaC, CI/CD, orchestration) |
+| [Math_Containerization.md](../../../notes/math/Math_Containerization.md) | Full category-theoretic foundations of $Y^D$ and $eval$ |
+| [Math_Notes_Platform_Engineer.md](../../../notes/math/Math_Notes_Platform_Engineer.md) | Broader platform math (IaC, CI/CD, orchestration) |
 | [Docker_Documentation.md](../../../Docker_Documentation.md) | Ops manual: commands, troubleshooting, architecture diagram |
-| [Platform Engineering Roadmap.md](../Platform%20Engineering%20Roadmap.md) | Phases 1–4 overview |
-| [PE_RM_Phase1.md](../blueprints/PE_RM_Phase1.md) | Original Phase 1 design spec |
+| [PE_Roadmap_1.md](../../../notes/projects/covenant/PE_Roadmap_1.md) | Phases 1–4 overview |
+| [PE_RM_Phase1.md](../../../notes/projects/covenant/PE_RM_Phase1.md) | Original Phase 1 design spec |
 | [PROJECT_DOCUMENTATION.md](../../../PROJECT_DOCUMENTATION.md) | Application-layer Python architecture |
 | [Reading the Pipeline Code.md](Reading%20the%20Pipeline%20Code.md) | Line-by-line walkthrough of `covenant_pipeline/` (the program morphism $P$) |
-| [Math for the Application Pipeline.md](../math/Math%20for%20the%20Application%20Pipeline.md) | Category-theoretic foundations of phase composition and Kleisli LLM stages |
+| [Math_Application_Pipeline.md](../../../notes/projects/covenant/Math_Application_Pipeline.md) | Category-theoretic foundations of phase composition and Kleisli LLM stages |
 
 ### D. Python ↔ Docker Concept Map
 
