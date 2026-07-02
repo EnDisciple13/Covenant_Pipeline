@@ -2,6 +2,8 @@
 
 - [Table of Contents](#table-of-contents)
 
+- [Related Notes](#related-notes)
+
 - [Road Map: Credit Agreement](#road-map-credit-agreement)
 
 - [Stage 1: Sketch Solution for Specific Example - Hallador](#stage-1-sketch-solution-for-specific-example-hallador)
@@ -67,6 +69,15 @@
 - [Appendix](#appendix)
   - [The Actor-Critic Validation Paradigm](#the-actor-critic-validation-paradigm)
     - [Application to the Credit Agreement Pipeline](#application-to-the-credit-agreement-pipeline)
+
+# **Related Notes**
+
+Conceptual context for this pipeline lives in the companion `notes` repo (open it alongside this repo in the Cursor multi-root workspace). These links resolve locally; they do not render on GitHub since the repos publish separately.
+
+- [notes/meta/Meta_Workflow.md](../notes/meta/Meta_Workflow.md) — canonical 0-4 Centaur meta-workflow.
+- [notes/meta/Layer4_TypeB_Auditing.md](../notes/meta/Layer4_TypeB_Auditing.md) — Type B auditing and invariants (relevant to the integrity auditor and Pydantic gates).
+- [notes/math/Math_Containerization.md](../notes/math/Math_Containerization.md) — categorical foundations of containerization.
+- [notes/projects/covenant/README.md](../notes/projects/covenant/README.md) — project note index (PE roadmaps, Phase 1 blueprint).
 
 # **Road Map: Credit Agreement**
 
