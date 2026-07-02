@@ -51,5 +51,6 @@ Use `layered-project-docs` for in-repo doc structure (TOC, deviations appendix).
 ## Related
 
 - Notes manifest: `../Notes/registry.yaml`
+- Workflow skills: `../Notes/.cursor/skills/` (canonical in Notes)
 - Mirror index: [docs/platform-engineering/README.md](docs/platform-engineering/README.md)
 - CI: `.github/workflows/mirror-check.yml`
