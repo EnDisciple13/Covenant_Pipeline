@@ -1,0 +1,49 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: viewer/backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker
+    environment:
+      COVENANT_PDF_PATH: /app/data/Credit_Agreement_Hallador.pdf
+      COVENANT_OUTPUT_DIR: /app/data/out
+      COVENANT_AUDITED_JSON: /app/data/out/final_compiled_payload_audited.json
+      COVENANT_DISPATCH_QUEUE_JSON: /app/data/out/dispatch_queue_output.json
+    volumes:
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: ./viewer/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  pipeline:
+    profiles:
+      - pipeline
+    build:
+      context: .
+      dockerfile: viewer/backend/Dockerfile
+    entrypoint:
+      - covenant-pipeline
+    command:
+      - run
+      - --pdf
+      - /app/data/Credit_Agreement_Hallador.pdf
+      - --output-dir
+      - /app/data/out
+    env_file:
+      - .env.docker
+    environment:
+      COVENANT_PDF_PATH: /app/data/Credit_Agreement_Hallador.pdf
+      COVENANT_OUTPUT_DIR: /app/data/out
+      COVENANT_AUDITED_JSON: /app/data/out/final_compiled_payload_audited.json
+      COVENANT_DISPATCH_QUEUE_JSON: /app/data/out/dispatch_queue_output.json
+    volumes:
+      - ./data:/app/data

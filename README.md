@@ -120,6 +120,47 @@ run_full_pipeline(paths)
 covenant_pipeline/     # Core pipeline (CLI entry: covenant-pipeline)
 config/                # covenant_config.json routing rules
 out/                   # Default pipeline output directory (gitignored)
+data/                  # Docker volume mount (PDF in, artifacts in data/out/)
 viewer/                # FastAPI backend + React frontend
 legacy/                # Prior monolith and old documentation (reference only)
 ```
+
+## Docker (Phase 1)
+
+Run the pipeline and viewer in isolated containers. Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+**Full containerization reference:** [Docker_Documentation.md](Docker_Documentation.md)
+
+### Setup
+
+```bash
+copy .env.docker.example .env.docker    # Windows
+# cp .env.docker.example .env.docker    # macOS/Linux
+```
+
+Edit `.env.docker` and set `GEMINI_API_KEY` (required for full pipeline runs; not needed for `--skip-llm`).
+
+Place your source PDF at `data/Credit_Agreement_Hallador.pdf` (or override paths in `docker-compose.yml`).
+
+### Run the pipeline
+
+```bash
+# Deterministic stages only (no API key)
+docker compose --profile pipeline run --rm pipeline run --skip-llm --pdf /app/data/Credit_Agreement_Hallador.pdf --output-dir /app/data/out
+
+# Full pipeline (requires GEMINI_API_KEY in .env.docker)
+docker compose --profile pipeline run --rm pipeline
+```
+
+Artifacts are written to `data/out/` on the host.
+
+### Serve the viewer
+
+```bash
+docker compose up backend frontend
+```
+
+- Viewer: http://localhost:5173
+- API: http://localhost:8000
+
+The frontend Nginx container proxies `/api/*` to the backend service.
