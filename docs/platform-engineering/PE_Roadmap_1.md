@@ -1,16 +1,16 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/PE_Roadmap_1.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/PE_Roadmap_1.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
 
 ## Platform Engineering Roadmap: The CA Pipeline
 
 **Milestone 1 (M1)** deploys the Covenant Extraction Pipeline to cloud infrastructure. **Milestone 2 (M2)** generalizes to an Internal Developer Platform (IDP) — see [PE_Roadmap_M2.md](PE_Roadmap_M2.md).
 
-Planning docs for the infrastructure layer. Phase 1 implementation: see [Docker_Documentation.md](../../Docker_Documentation.md) in the `covenant_pipeline` repo.
+Planning docs for the infrastructure layer. Phase 1 implementation: see [Docker_Documentation.md](https://github.com/endisciple13/covenant_pipeline/blob/main/Docker_Documentation.md) in the `covenant_pipeline` repo.
 
 **Technical blueprints (detailed design specs):**
 
 | Phase | Blueprint | Status |
 |-------|-----------|--------|
-| Phase 1: Local Containerization | [PE_RM_Phase1.md](blueprints/PE_RM_Phase1.md) | Implemented — see [Docker_Documentation.md](../../Docker_Documentation.md) |
+| Phase 1: Local Containerization | [PE_RM_Phase1.md](blueprints/PE_RM_Phase1.md) | Implemented — see [Docker_Documentation.md](https://github.com/endisciple13/covenant_pipeline/blob/main/Docker_Documentation.md) |
 | Phase 2: Target Cloud Topology (AWS) | [PE_RM_Phase2.md](blueprints/PE_RM_Phase2.md) | Design only |
 | Phase 3: Infrastructure as Code (Terraform) | [PE_RM_Phase3.md](blueprints/PE_RM_Phase3.md) | Design only |
 | Phase 4: CI/CD Orchestration | [PE_RM_Phase4.md](blueprints/PE_RM_Phase4.md) | Design only |
@@ -23,7 +23,7 @@ Planning docs for the infrastructure layer. Phase 1 implementation: see [Docker_
 
 ### Phase 1: Local Containerization (Constructing the Exponential Object)
 
-**Blueprint:** [PE_RM_Phase1.md](blueprints/PE_RM_Phase1.md) | **Implementation:** [Docker_Documentation.md](../../Docker_Documentation.md)
+**Blueprint:** [PE_RM_Phase1.md](blueprints/PE_RM_Phase1.md) | **Implementation:** [Docker_Documentation.md](https://github.com/endisciple13/covenant_pipeline/blob/main/Docker_Documentation.md)
 
 Before the pipeline can touch a cloud network, it must be mathematically isolated. This phase ensures the software runs exactly the same way in Garland, Texas, as it will on a server in an East Coast data center.
 

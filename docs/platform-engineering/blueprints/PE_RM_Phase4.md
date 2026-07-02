@@ -1,4 +1,4 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/PE_RM_Phase4.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/blueprints/PE_RM_Phase4.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
 
 # Technical Blueprint: Phase 4 - CI/CD Orchestration (The Control Loop)
 
@@ -84,7 +84,7 @@ restricted to validated code only. Phase 3's Terraform functor $F$ executes the 
     2. Set up Python 3.11
     3. `pip install -e ".[viewer]"`
     4. Generate a **fixture compiled payload** for audit (or use committed test fixture under `tests/fixtures/`)
-    5. Run: `covenant-pipeline audit` (invokes [covenant_pipeline/phases/audit.py](../../../covenant_pipeline/phases/audit.py))
+    5. Run: `covenant-pipeline audit` (invokes [covenant_pipeline/phases/audit.py](https://github.com/endisciple13/covenant_pipeline/blob/main/covenant_pipeline/phases/audit.py))
     6. **Exit criteria:** Non-zero exit if `Audit_Status` is not `Clean` or if dangling pointers / circular references / type violations are detected
 
 - **Audit checks (from `audit.py`):**

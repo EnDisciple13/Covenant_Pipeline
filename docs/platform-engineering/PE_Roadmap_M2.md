@@ -1,4 +1,4 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/PE_Roadmap_M2.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/PE_Roadmap_M2.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
 
 # Enterprise Platform Architecture: The Transition to Milestone 2
 

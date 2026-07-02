@@ -1,4 +1,4 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/PE_RM_Phase2.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
 
 # Technical Blueprint: Phase 2 - Target Cloud Topology (AWS)
 
@@ -14,7 +14,7 @@
 
 The mapping from local Compose services to cloud objects must preserve the Phase 1 service topology: `frontend` → `backend` API proxy, and on-demand `pipeline` execution separate from the read-only viewer API.
 
-**Prerequisite:** Phase 1 complete. See [Docker_Documentation.md](../../../Docker_Documentation.md) for the implemented local containerization.
+**Prerequisite:** Phase 1 complete. See [Docker_Documentation.md](https://github.com/endisciple13/covenant_pipeline/blob/main/Docker_Documentation.md) for the implemented local containerization.
 
 ## II. Target Architecture & File Tree
 
@@ -62,8 +62,8 @@ AWS Account (target)
 **Purpose:** Store built Docker images as versioned, immutable artifacts. ECR is the cloud repository for exponential objects $Y^D$.
 
 - **Repositories:** Create two private ECR repositories:
-    - `covenant-pipeline-backend` — image built from [viewer/backend/Dockerfile](../../../viewer/backend/Dockerfile)
-    - `covenant-pipeline-frontend` — image built from [viewer/frontend/Dockerfile](../../../viewer/frontend/Dockerfile)
+    - `covenant-pipeline-backend` — image built from [viewer/backend/Dockerfile](https://github.com/endisciple13/covenant_pipeline/blob/main/viewer/backend/Dockerfile)
+    - `covenant-pipeline-frontend` — image built from [viewer/frontend/Dockerfile](https://github.com/endisciple13/covenant_pipeline/blob/main/viewer/frontend/Dockerfile)
 
 - **Image tagging strategy:**
     - `latest` — most recent successful CI build (Phase 4)
@@ -88,7 +88,7 @@ AWS Account (target)
 - **CPU / Memory:** Start with 0.5 vCPU / 1 GB (tune after profiling PDF serving)
 - **Desired count:** 1 (minimum for PoC; scale to 2+ for HA in production)
 - **Networking:** Private subnet only; no public IP; reachable via ALB target group
-- **Environment variables** (same contract as [docker-compose.yml](../../../docker-compose.yml)):
+- **Environment variables** (same contract as [docker-compose.yml](https://github.com/endisciple13/covenant_pipeline/blob/main/docker-compose.yml)):
     - `COVENANT_PDF_PATH` → S3 path or local mount synced from S3
     - `COVENANT_OUTPUT_DIR` → `/app/data/out`
     - `COVENANT_AUDITED_JSON` → `/app/data/out/final_compiled_payload_audited.json`
@@ -101,7 +101,7 @@ AWS Account (target)
 - **CPU / Memory:** 0.25 vCPU / 512 MB (static Nginx serving)
 - **Desired count:** 1
 - **Networking:** Private subnet; ALB routes `/*` (except `/api/*`) to port 80
-- **Nginx config:** Same [viewer/frontend/nginx.conf](../../../viewer/frontend/nginx.conf) — but `proxy_pass` must target the ALB internal backend target group or ECS service discovery DNS for `backend`, not Docker Compose hostname `backend`
+- **Nginx config:** Same [viewer/frontend/nginx.conf](https://github.com/endisciple13/covenant_pipeline/blob/main/viewer/frontend/nginx.conf) — but `proxy_pass` must target the ALB internal backend target group or ECS service discovery DNS for `backend`, not Docker Compose hostname `backend`
 
 #### Task 3: `pipeline` (On-Demand Extraction)
 
@@ -167,7 +167,7 @@ AWS Account (target)
 - **S3 bucket:** `covenant-pipeline-data-{env}` (versioning enabled)
 - **Layout mirrors local `data/`:**
     - `s3://.../agreements/{filename}.pdf` — source PDFs
-    - `s3://.../out/` — all pipeline artifacts (see PipelinePaths constants in [PROJECT_DOCUMENTATION.md](../../../PROJECT_DOCUMENTATION.md))
+    - `s3://.../out/` — all pipeline artifacts (see PipelinePaths constants in [PROJECT_DOCUMENTATION.md](https://github.com/endisciple13/covenant_pipeline/blob/main/PROJECT_DOCUMENTATION.md))
 - **Sync strategy (choose one at implementation):**
     - **Option A (recommended for PoC):** Pipeline `run-task` downloads PDF from S3 to `/app/data/`, runs extraction, uploads `out/` back to S3 on completion. Backend task syncs `out/` from S3 at startup or on interval.
     - **Option B:** Mount S3 via Mountpoint for Amazon S3 (Fargate-compatible POSIX mount) — simpler code changes, newer AWS feature.

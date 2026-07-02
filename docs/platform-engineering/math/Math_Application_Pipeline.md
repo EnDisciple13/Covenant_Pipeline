@@ -1,10 +1,10 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/Math_Application_Pipeline.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/math/Math_Application_Pipeline.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
 
 # Architectural Formalization: The Category-Theoretic Foundations of the Covenant Pipeline
 
 This document formalizes the **application layer** of the Credit Agreement pipeline — the program morphism $P$ that [Math_Containerization.md](../../../../Notes/math/Math_Containerization.md) treats as an abstract arrow $P : D \to Y$. Where containerization internalizes $P$ into the exponential object $Y^D$, this document decomposes $P$ itself into composed phase-morphisms over a category of pipeline artifacts.
 
-**Companion:** [Reading the Pipeline Code.md](../learning/Reading%20the%20Pipeline%20Code.md) — line-by-line code walkthrough using this notation.
+**Companion:** [Reading the Pipeline Code.md](https://github.com/endisciple13/covenant_pipeline/blob/main/docs/platform-engineering/learning/Reading%20the%20Pipeline%20Code.md) — line-by-line code walkthrough using this notation.
 
 **Notation:** Reuses $D$, $Y$, $P$, $eval$, $\circ$ from the containerization notes. Introduces phase morphisms $f_*$, Kleisli arrows $\rightsquigarrow$, and the reference graph $G_{\text{ref}}$.
 
@@ -249,8 +249,8 @@ The CLI (`covenant_pipeline/cli.py`) exposes **partial evaluations** of $P$:
 
 | Document | Purpose |
 |----------|---------|
-| [Reading the Pipeline Code.md](../learning/Reading%20the%20Pipeline%20Code.md) | Line-by-line application code walkthrough |
+| [Reading the Pipeline Code.md](https://github.com/endisciple13/covenant_pipeline/blob/main/docs/platform-engineering/learning/Reading%20the%20Pipeline%20Code.md) | Line-by-line application code walkthrough |
 | [Math_Containerization.md](../../../../Notes/math/Math_Containerization.md) | $Y^D$, $eval$, internalization |
 | [Math_Notes_Platform_Engineer.md](../../../../Notes/math/Math_Notes_Platform_Engineer.md) | Broader platform math (IaC, CI/CD) |
-| [Reading the Docker Code.md](../learning/Reading%20the%20Docker%20Code.md) | Infrastructure layer walkthrough |
-| [PROJECT_DOCUMENTATION.md](../../../PROJECT_DOCUMENTATION.md) | Operational architecture reference |
+| [Reading the Docker Code.md](https://github.com/endisciple13/covenant_pipeline/blob/main/docs/platform-engineering/learning/Reading%20the%20Docker%20Code.md) | Infrastructure layer walkthrough |
+| [PROJECT_DOCUMENTATION.md](https://github.com/endisciple13/covenant_pipeline/blob/main/PROJECT_DOCUMENTATION.md) | Operational architecture reference |
