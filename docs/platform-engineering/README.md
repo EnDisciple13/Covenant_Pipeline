@@ -18,14 +18,16 @@ auto-synced into `covenant_pipeline/docs/platform-engineering/` by
 | Phase 3: Terraform blueprint | [blueprints/PE_RM_Phase3.md](blueprints/PE_RM_Phase3.md) | [PE_RM_Phase3.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md) |
 | Phase 4: CI/CD blueprint | [blueprints/PE_RM_Phase4.md](blueprints/PE_RM_Phase4.md) | [PE_RM_Phase4.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase4.md) |
 
-## Reusable theory (notes-only, not mirrored)
+## Math (canonical in Notes, mirrored to covenant_pipeline)
 
-| Document | GitHub |
-|----------|--------|
-| [Math index](../../../Notes/math/README.md) | [math/README.md](https://github.com/endisciple13/notes/blob/main/math/README.md) |
-| [Math_Containerization.md](../../../Notes/math/platform-engineering/Math_Containerization.md) | [Math_Containerization.md](https://github.com/endisciple13/notes/blob/main/math/platform-engineering/Math_Containerization.md) |
-| [Math_Notes_Platform_Engineer.md](../../../Notes/math/platform-engineering/Math_Notes_Platform_Engineer.md) | [Math_Notes_Platform_Engineer.md](https://github.com/endisciple13/notes/blob/main/math/platform-engineering/Math_Notes_Platform_Engineer.md) |
-| [Math_Application_Pipeline.md](../../../Notes/math/platform-engineering/Math_Application_Pipeline.md) | [Math_Application_Pipeline.md](https://github.com/endisciple13/notes/blob/main/math/platform-engineering/Math_Application_Pipeline.md) |
+Edit in **Notes** `math/platform-engineering/`. Mirrors land in `covenant_pipeline/docs/platform-engineering/math/`.
+
+| Document | Canonical (Notes) | Mirror (covenant_pipeline) |
+|----------|-------------------|----------------------------|
+| Math index | [math/README.md](../../../Notes/math/README.md) | — (Notes-only index) |
+| [Math_Containerization.md](math/Math_Containerization.md) | [GitHub](https://github.com/endisciple13/notes/blob/main/math/platform-engineering/Math_Containerization.md) | [math/Math_Containerization.md](https://github.com/endisciple13/covenant_pipeline/blob/main/docs/platform-engineering/math/Math_Containerization.md) |
+| [Math_Notes_Platform_Engineer.md](math/Math_Notes_Platform_Engineer.md) | [GitHub](https://github.com/endisciple13/notes/blob/main/math/platform-engineering/Math_Notes_Platform_Engineer.md) | [math/Math_Notes_Platform_Engineer.md](https://github.com/endisciple13/covenant_pipeline/blob/main/docs/platform-engineering/math/Math_Notes_Platform_Engineer.md) |
+| [Math_Application_Pipeline.md](math/Math_Application_Pipeline.md) | [GitHub](https://github.com/endisciple13/notes/blob/main/math/platform-engineering/Math_Application_Pipeline.md) | [math/Math_Application_Pipeline.md](https://github.com/endisciple13/covenant_pipeline/blob/main/docs/platform-engineering/math/Math_Application_Pipeline.md) |
 
 ## Phase status (navigation aid)
 
