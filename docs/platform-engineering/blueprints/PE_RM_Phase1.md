@@ -19,7 +19,7 @@ invariants:
 
 **CS / English:** Package the existing Credit Agreement (CA) application into two isolated Docker containers (Backend and Frontend) and orchestrate them locally using Docker Compose. This ensures the application runs completely independently of the local host OS, maintaining consistent dependency resolution and networking.
 
-**Mathematical Formalization:** We are constructing the isolated categorical context $\Gamma_{container}$. We will internalize the application morphisms into two distinct exponential objects ($Y^D_{Backend}$ and $Y^D_{Frontend}$). The Docker Compose file will define the evaluation morphism ($eval$) and the strict networking topology that binds them, ensuring the host context ($X$) remains unpolluted: $\Gamma_{container} \cap \Gamma_{host} = \emptyset$.
+**Mathematical Formalization:** We are constructing the isolated categorical context $\Gamma_{container}$. We will internalize the application morphisms into two distinct exponential objects ($Y^D_{Backend}$ and $Y^D_{Frontend}$). The Docker Compose file will define the evaluation morphism ($eval$) and the strict networking topology that binds them, ensuring runtime dependencies remain containerized: $\Gamma_{container} \cap \Gamma_{host} = \emptyset$ for **runtime dependency objects** ($D$). Data I/O via bind mounts is an explicit morphism exception (see Dev exception below).
 
 ## II. Target Architecture & File Tree
 
@@ -93,6 +93,8 @@ Plaintext
     - Environment: Pass `GEMINI_API_KEY` from a local `.env` file into the container.
         
     - **Volume Mounts [CRITICAL]:** * Mount a local `./data` directory to `/app/data` inside the container. This allows you to drop `Credit_Agreement_Hallador.pdf` into a folder on your Mac/PC, and the containerized engine can read it, process it, and write the `final_compiled_payload_audited.json` back to the host filesystem without rebuilding the image.
+
+    > **Dev exception:** The `./data` bind mount is an intentional local-development I/O path. Runtime dependencies (Python, Node, libraries) remain fully containerized per the `host-isolation` invariant. Production replaces this mount with S3 persistence (see [PE_RM_Phase2.md](PE_RM_Phase2.md)).
         
 - **Service 2: `frontend`**
     

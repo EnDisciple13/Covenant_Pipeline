@@ -74,7 +74,7 @@ $$P_{\text{full}} = f_{\text{validate}} \circ f_{\text{audit}} \circ f_{\text{co
 | $f_{\text{audit}}$ | $X_{\text{compiled}}$ | $X_{\text{compiled}}$ | Yes (endomorphism) |
 | $f_{\text{validate}}$ | $X_{\text{compiled}} \times X_{\text{payload}}$ | $Y$ | Stochastic |
 
-**Glossary ordering note:** Glossary runs before extract in code but does not feed extract at runtime. It parallelizes with routing from $X_{\text{payload}}$ and ensures $X_{\text{glossary}}$ exists before $f_{\text{compile}}$.
+**Glossary ordering note:** $f_{\text{glossary}}$ is an optional parallel branch from $X_{\text{payload}}$ (merged with routing output before $f_{\text{compile}}$). Glossary runs before extract in code but does not feed extract at runtime; it parallelizes with routing and ensures $X_{\text{glossary}}$ exists before $f_{\text{compile}}$. Composition order is documented in the orchestrator diagram below.
 
 **Partial composition (--skip-llm):**
 

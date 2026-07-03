@@ -26,6 +26,8 @@ invariants:
 
 The mapping from local Compose services to cloud objects must preserve the Phase 1 service topology: `frontend` → `backend` API proxy, and on-demand `pipeline` execution separate from the read-only viewer API.
 
+> **Prerequisite note:** Phase 1 [`docker-compose.yml`](https://github.com/endisciple13/covenant_pipeline/blob/main/docker-compose.yml) already defines the `pipeline` profile (`docker compose run --rm pipeline`). Phase 2 maps that same topology to ECS `run-task` — it is not a new service topology, only a cloud runtime for the existing on-demand extraction path.
+
 **Prerequisite:** Phase 1 complete. See [Docker_Documentation.md](https://github.com/endisciple13/covenant_pipeline/blob/main/Docker_Documentation.md) for the implemented local containerization.
 
 ## II. Target Architecture & File Tree

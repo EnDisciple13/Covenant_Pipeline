@@ -9,9 +9,9 @@ dependencies:
 tags: []
 invariants:
   - id: host-isolation
-    statement: "Container context Gamma_container is disjoint from host context Gamma_host"
+    statement: "Runtime dependency context Gamma_container is disjoint from host runtime-deps Gamma_host; data I/O bind mounts are explicit dev exceptions"
   - id: eval-morphism
-    statement: "Docker Compose eval morphism connects Backend and Frontend exponential objects without type mismatch"
+    statement: "Generic eval_{D,Y} connects exponential objects; Backend/Frontend pair is the covenant_pipeline instantiation"
 ---
 # Architectural Formalization: The Category-Theoretic Foundations of Containerization
 

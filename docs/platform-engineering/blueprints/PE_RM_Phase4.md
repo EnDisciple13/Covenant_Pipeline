@@ -10,7 +10,7 @@ dependencies:
 tags: []
 invariants:
   - id: promotion-order
-    statement: "CI/CD promotes images through dev then staging then prod; prod deploy requires staging gate"
+    statement: "CI/CD auto-deploys dev on merge; staging and prod require manual workflow_dispatch or environment approval"
 ---
 # Technical Blueprint: Phase 4 - CI/CD Orchestration (The Control Loop)
 
