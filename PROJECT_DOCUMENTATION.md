@@ -76,7 +76,7 @@ Conceptual context for this pipeline lives in the companion `notes` repo (open i
 
 Mirrored here (project-specific strategy):
 
-- [docs/platform-engineering/PE_Roadmap_1.md](docs/platform-engineering/PE_Roadmap_1.md) — M1 platform engineering roadmap (Phases 1–4).
+- [docs/platform-engineering/PE_Roadmap_M1.md](docs/platform-engineering/PE_Roadmap_M1.md) — M1 platform engineering roadmap (Phases 1–4).
 - [docs/platform-engineering/PE_Roadmap_M2.md](docs/platform-engineering/PE_Roadmap_M2.md) — M2 IDP vision (generalize beyond CA pipeline).
 - [docs/platform-engineering/blueprints/PE_RM_Phase1.md](docs/platform-engineering/blueprints/PE_RM_Phase1.md) — Phase 1 containerization blueprint.
 - [docs/platform-engineering/blueprints/PE_RM_Phase2.md](docs/platform-engineering/blueprints/PE_RM_Phase2.md) — Phase 2 cloud topology blueprint.
@@ -773,7 +773,7 @@ After a full pipeline run (through `validate`), the pipeline writes a self-conta
 
 # **Future Roadmap (Not Yet Implemented)**
 
-**Infrastructure:** Local Docker containerization (Phase 1) is implemented — see [Docker_Documentation.md](Docker_Documentation.md). Cloud registry, Terraform, and CI/CD remain on the platform engineering roadmap ([docs/platform-engineering/PE_Roadmap_1.md](docs/platform-engineering/PE_Roadmap_1.md)).
+**Infrastructure:** Local Docker containerization (Phase 1) is implemented — see [Docker_Documentation.md](Docker_Documentation.md). Cloud registry, Terraform, and CI/CD remain on the platform engineering roadmap ([docs/platform-engineering/PE_Roadmap_M1.md](docs/platform-engineering/PE_Roadmap_M1.md)).
 
 The following features appear in legacy documentation or router log messages but are **not present** in the refactored codebase:
 

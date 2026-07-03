@@ -1,4 +1,4 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/PE_Roadmap_1.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/PE_Roadmap_M1.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
 ## Platform Engineering Roadmap: The CA Pipeline
 

@@ -2,7 +2,7 @@
 
 # Enterprise Platform Architecture: The Transition to Milestone 2
 
-**Prerequisite:** M1 Phases 1–4 complete — see [PE_Roadmap_1.md](PE_Roadmap_1.md).
+**Prerequisite:** M1 Phases 1–4 complete — see [PE_Roadmap_M1.md](PE_Roadmap_M1.md).
 
 ## Part I: The Operational Distinction (M1 vs. M2)
 

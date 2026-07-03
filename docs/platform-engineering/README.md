@@ -11,7 +11,7 @@ auto-synced into `covenant_pipeline/docs/platform-engineering/` by
 
 | Document | Local | GitHub |
 |----------|-------|--------|
-| M1 hub roadmap | [PE_Roadmap_1.md](PE_Roadmap_1.md) | [PE_Roadmap_1.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/PE_Roadmap_1.md) |
+| M1 hub roadmap | [PE_Roadmap_M1.md](PE_Roadmap_M1.md) | [PE_Roadmap_M1.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/PE_Roadmap_M1.md) |
 | M2 IDP vision | [PE_Roadmap_M2.md](PE_Roadmap_M2.md) | [PE_Roadmap_M2.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/PE_Roadmap_M2.md) |
 | Phase 1: Local containerization blueprint | [blueprints/PE_RM_Phase1.md](blueprints/PE_RM_Phase1.md) | [PE_RM_Phase1.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase1.md) |
 | Phase 2: Cloud topology blueprint | [blueprints/PE_RM_Phase2.md](blueprints/PE_RM_Phase2.md) | [PE_RM_Phase2.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md) |
