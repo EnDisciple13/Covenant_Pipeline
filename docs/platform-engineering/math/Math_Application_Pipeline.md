@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/math/platform-engineering/Math_Application_Pipeline.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: math-application-pipeline
+type: math_domain
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 # Architectural Formalization: The Category-Theoretic Foundations of the Covenant Pipeline
 
 This document formalizes the **application layer** of the Credit Agreement pipeline — the program morphism $P$ that [Math_Containerization.md](Math_Containerization.md) treats as an abstract arrow $P : D \to Y$. Where containerization internalizes $P$ into the exponential object $Y^D$, this document decomposes $P$ itself into composed phase-morphisms over a category of pipeline artifacts.

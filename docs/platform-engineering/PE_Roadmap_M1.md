@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/PE_Roadmap_M1.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: projects-covenant-platform-engineering-PE_Roadmap_M1
+type: project_strategy
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 ## Platform Engineering Roadmap: The CA Pipeline
 
 **Milestone 1 (M1)** deploys the Covenant Extraction Pipeline to cloud infrastructure. **Milestone 2 (M2)** generalizes to an Internal Developer Platform (IDP) — see [PE_Roadmap_M2.md](PE_Roadmap_M2.md).

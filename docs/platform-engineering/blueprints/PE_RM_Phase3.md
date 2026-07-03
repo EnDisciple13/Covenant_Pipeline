@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: projects-covenant-platform-engineering-blueprints-PE_RM_Phase3
+type: blueprint
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 # Technical Blueprint: Phase 3 - Infrastructure as Code (Terraform)
 
 ## I. Objective

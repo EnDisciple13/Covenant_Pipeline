@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/blueprints/PE_RM_Phase4.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: projects-covenant-platform-engineering-blueprints-PE_RM_Phase4
+type: blueprint
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 # Technical Blueprint: Phase 4 - CI/CD Orchestration (The Control Loop)
 
 ## I. Objective

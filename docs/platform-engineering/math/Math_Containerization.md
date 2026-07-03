@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/math/platform-engineering/Math_Containerization.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: math-containerization
+type: math_domain
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 # Architectural Formalization: The Category-Theoretic Foundations of Containerization
 
 ## 1. The Ambient Category and Base Objects

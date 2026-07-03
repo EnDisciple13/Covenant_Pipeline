@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/math/platform-engineering/Math_Notes_Platform_Engineer.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: math-platform-engineer
+type: math_domain
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 ## Comprehensive Reference Notes: The Mathematical Framework of Platform Engineering
 
 This document provides a rigorous, formal mathematical mapping of the core pillars of modern platform engineering. By transitioning away from loose software metaphors, these notes ground architectural pipeline concepts in Cartesian Closed Categories, Functorial Semantics, and Control Theory.

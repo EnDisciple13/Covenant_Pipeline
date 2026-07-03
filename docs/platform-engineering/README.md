@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/README.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: projects-covenant-platform-engineering-README
+type: project_strategy
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 # Platform Engineering Documentation
 
 Canonical PE strategy docs for the Covenant Extraction Pipeline. Mirrors are

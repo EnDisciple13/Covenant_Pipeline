@@ -1,5 +1,13 @@
 <!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/PE_Roadmap_M2.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
+---
+id: projects-covenant-platform-engineering-PE_Roadmap_M2
+type: project_strategy
+status: draft
+dependencies:
+tags: []
+invariants: []
+---
 # Enterprise Platform Architecture: The Transition to Milestone 2
 
 **Prerequisite:** M1 Phases 1–4 complete — see [PE_Roadmap_M1.md](PE_Roadmap_M1.md).
