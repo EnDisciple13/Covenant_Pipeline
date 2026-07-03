@@ -5,8 +5,11 @@ id: projects-covenant-platform-engineering-blueprints-PE_RM_Phase3
 type: blueprint
 status: draft
 dependencies:
+  - projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md
 tags: []
-invariants: []
+invariants:
+  - id: iac-topology-parity
+    statement: "Terraform plan materializes every object declared in Phase 2 topology without undeclared resources"
 ---
 # Technical Blueprint: Phase 3 - Infrastructure as Code (Terraform)
 

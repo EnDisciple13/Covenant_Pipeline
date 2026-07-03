@@ -5,8 +5,13 @@ id: projects-covenant-platform-engineering-blueprints-PE_RM_Phase1
 type: blueprint
 status: draft
 dependencies:
+  - math/platform-engineering/Math_Containerization.md
 tags: []
-invariants: []
+invariants:
+  - id: image-determinism
+    statement: "Same Dockerfile and lockfile inputs produce identical image digests on rebuild"
+  - id: host-isolation
+    statement: "Container runtime does not require host-global Python or Node installations"
 ---
 # Technical Blueprint: Phase 1 - Local Containerization
 

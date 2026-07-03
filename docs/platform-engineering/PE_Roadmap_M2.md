@@ -5,6 +5,7 @@ id: projects-covenant-platform-engineering-PE_Roadmap_M2
 type: project_strategy
 status: draft
 dependencies:
+  - projects/covenant/platform-engineering/PE_Roadmap_M1.md
 tags: []
 invariants: []
 ---

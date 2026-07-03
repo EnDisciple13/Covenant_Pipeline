@@ -5,8 +5,12 @@ id: projects-covenant-platform-engineering-blueprints-PE_RM_Phase4
 type: blueprint
 status: draft
 dependencies:
+  - projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md
+  - projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md
 tags: []
-invariants: []
+invariants:
+  - id: promotion-order
+    statement: "CI/CD promotes images through dev then staging then prod; prod deploy requires staging gate"
 ---
 # Technical Blueprint: Phase 4 - CI/CD Orchestration (The Control Loop)
 

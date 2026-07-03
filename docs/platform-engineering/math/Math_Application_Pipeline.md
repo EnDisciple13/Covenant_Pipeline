@@ -5,8 +5,12 @@ id: math-application-pipeline
 type: math_domain
 status: draft
 dependencies:
+  - math/platform-engineering/Math_Containerization.md
+  - math/platform-engineering/Math_Notes_Platform_Engineer.md
 tags: []
-invariants: []
+invariants:
+  - id: phase-composition
+    statement: "Pipeline phase morphisms compose left-to-right; output type of phase N equals input type of phase N+1"
 ---
 # Architectural Formalization: The Category-Theoretic Foundations of the Covenant Pipeline
 

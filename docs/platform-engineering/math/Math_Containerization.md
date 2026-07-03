@@ -5,8 +5,13 @@ id: math-containerization
 type: math_domain
 status: draft
 dependencies:
+  - math/foundations/Math_Curry_Howard_Lambek.md
 tags: []
-invariants: []
+invariants:
+  - id: host-isolation
+    statement: "Container context Gamma_container is disjoint from host context Gamma_host"
+  - id: eval-morphism
+    statement: "Docker Compose eval morphism connects Backend and Frontend exponential objects without type mismatch"
 ---
 # Architectural Formalization: The Category-Theoretic Foundations of Containerization
 

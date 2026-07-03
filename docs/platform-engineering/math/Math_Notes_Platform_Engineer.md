@@ -5,8 +5,13 @@ id: math-platform-engineer
 type: math_domain
 status: draft
 dependencies:
+  - math/foundations/Math_Curry_Howard_Lambek.md
 tags: []
-invariants: []
+invariants:
+  - id: functor-composition
+    statement: "Pipeline functors compose: F(g . f) = F(g) . F(f) for IaC and CI/CD morphisms"
+  - id: image-immutability
+    statement: "Container image digest is immutable; tags are mutable pointers only"
 ---
 ## Comprehensive Reference Notes: The Mathematical Framework of Platform Engineering
 

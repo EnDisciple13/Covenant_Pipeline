@@ -5,8 +5,12 @@ id: projects-covenant-platform-engineering-blueprints-PE_RM_Phase2
 type: blueprint
 status: draft
 dependencies:
+  - math/platform-engineering/Math_Containerization.md
+  - projects/covenant/platform-engineering/blueprints/PE_RM_Phase1.md
 tags: []
-invariants: []
+invariants:
+  - id: topology-completeness
+    statement: "Every runtime dependency in the topology diagram maps to a named AWS resource"
 ---
 # Technical Blueprint: Phase 2 - Target Cloud Topology (AWS)
 
