@@ -13,7 +13,8 @@ Platform-engineering strategy docs under `docs/platform-engineering/` are
 
 | Content | Edit in |
 |---------|---------|
-| PE roadmaps, blueprints, application math | **Notes** `projects/covenant/` (canonical) |
+| PE roadmaps, blueprints | **Notes** `projects/covenant/` (canonical) |
+| Application pipeline math | **Notes** `math/platform-engineering/` (not mirrored) |
 | Application architecture | This repo: `PROJECT_DOCUMENTATION.md` |
 | Docker / Phase 1 implementation | This repo: `Docker_Documentation.md` (repo root) |
 | Learning walkthroughs | This repo: `docs/platform-engineering/learning/` |
