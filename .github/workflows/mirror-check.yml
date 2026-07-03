@@ -39,4 +39,5 @@ jobs:
           python-version: "3.11"
 
       - name: Check mirrors are in sync
-        run: python3 notes/scripts/sync_project_docs.py --check
+        # --project scopes the check to this repo only; sibling repos are not checked out.
+        run: python3 notes/scripts/sync_project_docs.py --check --project covenant_pipeline
