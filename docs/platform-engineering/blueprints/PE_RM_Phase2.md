@@ -1,4 +1,4 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
 # Technical Blueprint: Phase 2 - Target Cloud Topology (AWS)
 

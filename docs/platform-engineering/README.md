@@ -1,11 +1,11 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/README.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/README.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
 # Platform Engineering Documentation
 
 Canonical PE strategy docs for the Covenant Extraction Pipeline. Mirrors are
 auto-synced into `covenant_pipeline/docs/platform-engineering/` by
-`scripts/sync_pe_docs.py`. Edit files here in the Notes repo, then run
-`python scripts/sync_pe_docs.py --write` (Windows: `py scripts/sync_pe_docs.py --write`).
+`scripts/sync_project_docs.py`. Edit files here in the Notes repo, then run
+`python scripts/sync_project_docs.py --write` (Windows: `py scripts/sync_project_docs.py --write`).
 
 ## Strategy docs (canonical in Notes)
 
@@ -48,8 +48,8 @@ auto-synced into `covenant_pipeline/docs/platform-engineering/` by
 
 ```bash
 # from the Notes repo root
-python scripts/sync_pe_docs.py --check   # detect drift (used in CI / pre-commit)
-python scripts/sync_pe_docs.py --write   # regenerate mirror files in covenant_pipeline
+python scripts/sync_project_docs.py --check   # detect drift (used in CI / pre-commit)
+python scripts/sync_project_docs.py --write   # regenerate mirror files in covenant_pipeline
 ```
 
 Full project note index: [../README.md](../../../Notes/projects/covenant/README.md)

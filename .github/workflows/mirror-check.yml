@@ -5,10 +5,8 @@ name: PE docs mirror check
 # The canonical files live in a separate repo, so this workflow checks it out
 # alongside covenant_pipeline and runs the sync script in --check mode.
 #
-# Requirement: a repo/organization secret NOTES_REPO_TOKEN with read access to
-# the notes repo (a fine-grained PAT or deploy key). If the notes repo is
-# public, the default GITHUB_TOKEN may suffice and the `token:` line can be
-# removed.
+# Requirement: the notes repo must be readable by Actions (public repo, or
+# add a repo secret NOTES_REPO_TOKEN with read access if notes is private).
 
 on:
   pull_request:
@@ -33,7 +31,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: endisciple13/notes
-          token: ${{ secrets.NOTES_REPO_TOKEN }}
           path: notes
 
       - name: Set up Python
@@ -42,4 +39,4 @@ jobs:
           python-version: "3.11"
 
       - name: Check mirrors are in sync
-        run: python3 notes/scripts/sync_pe_docs.py --check
+        run: python3 notes/scripts/sync_project_docs.py --check

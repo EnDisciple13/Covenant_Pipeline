@@ -1,4 +1,4 @@
-<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/math/Math_Application_Pipeline.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_pe_docs.py -->
+<!-- MIRROR: auto-synced from notes/projects/covenant/platform-engineering/math/Math_Application_Pipeline.md - do not edit directly. Edit the canonical file in the notes repo and run scripts/sync_project_docs.py -->
 
 # Architectural Formalization: The Category-Theoretic Foundations of the Covenant Pipeline
 

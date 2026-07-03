@@ -23,8 +23,8 @@ Platform-engineering strategy docs under `docs/platform-engineering/` are
 
 ```bash
 # from Notes repo root
-python scripts/sync_pe_docs.py --write
-# Windows: py scripts/sync_pe_docs.py --write
+python scripts/sync_project_docs.py --write
+# Windows: py scripts/sync_project_docs.py --write
 ```
 
 Then commit the regenerated files under `docs/platform-engineering/` in this repo.
@@ -42,8 +42,8 @@ Mirror files start with:
 If phase status or deviations change in `Docker_Documentation.md`:
 
 1. Update the canonical roadmap status table in Notes (`projects/covenant/PE_Roadmap_1.md`)
-2. Run `sync_pe_docs.py --write` from Notes
-3. Run `sync_pe_docs.py --audit` to verify consistency
+2. Run `sync_project_docs.py --write` from Notes
+3. Run `sync_project_docs.py --audit` to verify consistency
 
 Use the `notes-cross-repo-sync` skill for the full reverse-flow checklist.
 Use `layered-project-docs` for in-repo doc structure (TOC, deviations appendix).
