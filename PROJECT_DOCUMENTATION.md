@@ -78,6 +78,7 @@ Mirrored here (project-specific strategy):
 
 - [docs/platform-engineering/PE_Roadmap_M1.md](docs/platform-engineering/PE_Roadmap_M1.md) — M1 platform engineering roadmap (Phases 1–4).
 - [docs/platform-engineering/PE_Roadmap_M2.md](docs/platform-engineering/PE_Roadmap_M2.md) — M2 IDP vision (generalize beyond CA pipeline).
+- [docs/platform-engineering/PE_Invariant_Suite.md](docs/platform-engineering/PE_Invariant_Suite.md) — Layer 4 invariant suite for the implemented pipeline phases and Docker layer (provenance grounding, chunker partition, router determinism, container parity).
 - [docs/platform-engineering/blueprints/PE_RM_Phase1.md](docs/platform-engineering/blueprints/PE_RM_Phase1.md) — Phase 1 containerization blueprint.
 - [docs/platform-engineering/blueprints/PE_RM_Phase2.md](docs/platform-engineering/blueprints/PE_RM_Phase2.md) — Phase 2 cloud topology blueprint.
 - [docs/platform-engineering/blueprints/PE_RM_Phase3.md](docs/platform-engineering/blueprints/PE_RM_Phase3.md) — Phase 3 Terraform blueprint.

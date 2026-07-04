@@ -25,6 +25,7 @@ auto-synced into `covenant_pipeline/docs/platform-engineering/` by
 | Phase 2: Cloud topology blueprint | [blueprints/PE_RM_Phase2.md](blueprints/PE_RM_Phase2.md) | [PE_RM_Phase2.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md) |
 | Phase 3: Terraform blueprint | [blueprints/PE_RM_Phase3.md](blueprints/PE_RM_Phase3.md) | [PE_RM_Phase3.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md) |
 | Phase 4: CI/CD blueprint | [blueprints/PE_RM_Phase4.md](blueprints/PE_RM_Phase4.md) | [PE_RM_Phase4.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase4.md) |
+| Invariant suite (pipeline + Docker) | [PE_Invariant_Suite.md](PE_Invariant_Suite.md) | [PE_Invariant_Suite.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/PE_Invariant_Suite.md) |
 
 ## Math (canonical in Notes, mirrored to covenant_pipeline)
 
