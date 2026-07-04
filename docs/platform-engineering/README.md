@@ -15,6 +15,12 @@ auto-synced into `covenant_pipeline/docs/platform-engineering/` by
 `scripts/sync_project_docs.py`. Edit files here in the Notes repo, then run
 `python scripts/sync_project_docs.py --write` (Windows: `py scripts/sync_project_docs.py --write`).
 
+## Domain scope (decision record, 2026-07-03)
+
+`platform-engineering` is the **umbrella strategy domain** for the entire Covenant project — application-layer strategy (the CA pipeline itself) and platform-layer strategy both mirror here. In milestone terms: the application layer is effectively **M0**, the current containerization/deployment work is **M1**, and true platform engineering (the IDP generalization) is **M2**.
+
+This is tracked naming debt, deliberately deferred — not an accident. The volume of application-layer strategy (currently one note, [PE_Invariant_Suite.md](PE_Invariant_Suite.md), which already separates pipeline vs platform invariants internally) does not yet justify a second domain. **Revisit when M2 work begins:** add a second mirror group for an application domain in `registry.yaml` (mirror `pairs` support arbitrary paths; only the singular `strategy_domain` label needs extending) and move the pipeline half of the invariant suite into it.
+
 ## Strategy docs (canonical in Notes)
 
 | Document | Local | GitHub |
