@@ -2,6 +2,8 @@
 
 Extract structured covenant data from credit agreement PDFs using a multi-stage pipeline: deterministic PDF chunking and routing, Gemini LLM extraction, relational compilation, integrity audit, and LLM-as-judge validation. An optional React/FastAPI viewer lets risk analysts verify extractions against source PDF pages.
 
+All sample documents and extracted payloads in this repo derive from credit agreements publicly filed with the SEC (EDGAR exhibits); no non-public documents are used.
+
 **Full architecture and module documentation:** [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md)
 
 ## Prerequisites
