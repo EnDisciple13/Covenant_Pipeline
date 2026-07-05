@@ -48,6 +48,12 @@ Expected initial result: **M2, M6, M7 likely survive** until their invariant tes
 
 Re-run after: new invariant tests, suite changes, model change (if drills are agent-applied). Each re-run should add ≥1 new mutation matching current failure sophistication — a static mutation list decays into a passed test.
 
+## Work items from baselines
+
+- **2026-07-05 — M5 adjudication (frontier; corrected after reading the baseline report):** M5 was `N/A` in v0 — no `glossary-acyclic` test exists, so "survived" means *untested*, not *evaded*. Design analysis for whoever implements it: `f_audit` fails **soft** (warnings recorded, payload still written — per PE_Invariant_Suite enforcement notes), so a future test that merely runs the pipeline would stay green even when the DFS detects the cycle. The test must assert `Audit_Status == Clean` / empty warnings on the golden fixture — the missing invariant is **audit-warnings-fail-the-suite**, candidate for PE_Invariant_Suite (user ratifies); feed to `/invariant-propose covenant_pipeline/phases/audit.py`.
+- **M2 / M7 survivors:** implement `chunker-partition` tests (monotonicity; bbox-in-page).
+- **M6 survivor:** implement `config-totality` test (missing required env var ⇒ named error, never a silent default).
+
 ## Rules
 
 - One mutation at a time; always revert before the next.
