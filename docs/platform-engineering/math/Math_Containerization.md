@@ -9,9 +9,9 @@ dependencies:
 tags: []
 invariants:
   - id: host-isolation
-    statement: "Runtime dependency context Gamma_container is disjoint from host runtime-deps Gamma_host; data I/O bind mounts are explicit dev exceptions"
+    statement: "Under changes to the host's userland: container observable behavior is unchanged - runtime dependency context Gamma_container is disjoint from host runtime-deps Gamma_host; data I/O bind mounts are explicit dev exceptions"
   - id: eval-morphism
-    statement: "RESTATED 2026-07-05 (original categorical form fell to wall 3 of the transfer test; audit adjudication 2026-07-05): the platform layer invokes containers only through the OCI runtime contract (image + run interface); a changed application image redeploys with zero platform-layer change. Backend/Frontend pair is the covenant_pipeline instantiation"
+    statement: "RESTATED 2026-07-05 (original categorical form fell to wall 3 of the transfer test; audit adjudication 2026-07-05): under application-image changes preserving the OCI runtime contract (image + run interface): the platform layer is unchanged - a changed application image redeploys with zero platform-layer change. Backend/Frontend pair is the covenant_pipeline instantiation"
 mappings:
   - id: container-exponential-object
     statement: "Docker image <-> exponential object Y^D in a CCC; docker build <-> internalization; docker run <-> eval morphism"

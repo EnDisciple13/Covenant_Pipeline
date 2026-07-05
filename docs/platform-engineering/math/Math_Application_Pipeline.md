@@ -10,9 +10,9 @@ dependencies:
 tags: []
 invariants:
   - id: phase-composition
-    statement: "Pipeline phase morphisms compose left-to-right; output type of phase N equals input type of phase N+1"
+    statement: "Under recomposition of the pipeline (adding, removing, or reordering phases): phase morphisms compose left-to-right and the output type of phase N equals the input type of phase N+1"
   - id: staging-parity
-    statement: "PROPOSED 2026-07-05 (by-product of rigor grading; awaiting ratification + test implementation): running the deterministic prefix as individual CLI stages produces byte-identical artifacts to a composed run - catches hidden inter-phase state that type compatibility misses"
+    statement: "PROPOSED 2026-07-05 (by-product of rigor grading; awaiting ratification + test implementation): under regrouping of the run (composed vs individual CLI stages): the deterministic prefix produces byte-identical artifacts - catches hidden inter-phase state that type compatibility misses"
 mappings:
   - id: phase-composition-morphisms
     statement: "Pipeline phases as typed morphisms over artifact category A, composed by orchestrator"
