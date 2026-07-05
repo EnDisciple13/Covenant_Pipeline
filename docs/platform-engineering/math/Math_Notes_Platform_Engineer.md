@@ -9,9 +9,35 @@ dependencies:
 tags: []
 invariants:
   - id: functor-composition
-    statement: "Pipeline functors compose: F(g . f) = F(g) . F(f) for IaC and CI/CD morphisms"
+    statement: "RESTATED 2026-07-05 (original functor law F(g.f)=F(g).F(f) failed the transfer test - see mappings): (a) reconciliation idempotence: immediate re-apply with unchanged code and no external interference performs zero mutations; (b) drift surfacing: plan on unchanged code reports exactly the out-of-band divergence"
   - id: image-immutability
     statement: "Container image digest is immutable; tags are mutable pointers only"
+mappings:
+  - id: container-context-collapse
+    statement: "Container context Gamma_container = D; execution collapses projection to id_D; Gamma_container disjoint from Gamma_host"
+    tier: tight
+    transfer: "Skeleton claim: containerized execution depends only on declared dependencies, never on host userland - the host-isolation invariant, checkable by container-parity test"
+    breaks: "Shared kernel: Gamma_container intersect Gamma_host contains the kernel and hardware, so disjointness is false below the userland boundary; images are CPU-architecture-specific ('executes identically on any physical architecture' overclaims); bind mounts are declared exceptions; the ambient category is undefinable"
+  - id: iac-functor
+    statement: "Terraform/IaC as covariant functor F: Code -> Cloud with F(id)=id (idempotence) and composition preservation"
+    tier: heuristic
+    transfer: ""
+    breaks: "F(id)=id is false under drift - plan on unchanged code produces mutations precisely when live state diverged, and drift detection (which this note's own prose depends on) exists because the cloud is NOT a function of the code; composition preservation fails under path-dependent applies (in-place update vs replacement); no categories are defined. Checkable residue: reconciliation idempotence (see restated functor-composition invariant)"
+  - id: cross-cloud-natural-transformation
+    statement: "Provider migration as natural transformation alpha: F => G with commuting naturality squares"
+    tier: heuristic
+    transfer: ""
+    breaks: "Neither functor exists (see iac-functor), so naturality is unstateable; provider capability mismatches guarantee special-casing in real migrations - precisely what naturality forbids. Useful spirit: 'no special-casing' as the design ideal for provider-agnostic modules (M2 goal)"
+  - id: ci-composition-gate
+    statement: "CI as strict composition of validation morphisms; failure as bottom type; CD as functor restricted to C_valid"
+    tier: tight
+    transfer: "Skeleton claim: fail-closed gating - a stage refusing to run when its predecessor failed is domain restriction, enforced by the workflow engine's dependency edges; checkable in any CI run log"
+    breaks: "Bottom as 'terminal error object' is misformalized (partial maps or Kleisli-Maybe is the correct setting); 'unproven code can never reach servers' is only as strong as the actual gates - cf. PE_RM_Phase4 scope correction 2026-07-04 (fixture audit vs release audit); branch-protection bypasses exist"
+  - id: k8s-control-loop
+    statement: "Orchestration as asymptotically stable negative-feedback dynamical system; lim ||e(t)|| = 0"
+    tier: tight
+    transfer: "Skeleton claim: controllers literally implement a desired-state/actual-state diff loop with corrective actions - reconciliation as negative feedback is the mechanism, checkable by killing a pod and watching replacement"
+    breaks: "State space is not a vector space - e(t) = S_desired - S_actual has no subtraction, it is a structured diff; asymptotic stability is NOT guaranteed (crash loops, unschedulable pods, livelock - Kubernetes guarantees retry, not convergence); disturbances are not bounded in reality"
 ---
 ## Comprehensive Reference Notes: The Mathematical Framework of Platform Engineering
 

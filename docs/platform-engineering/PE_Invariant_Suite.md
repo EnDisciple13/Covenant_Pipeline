@@ -34,9 +34,11 @@ invariants:
 
 > Applied inventory of Layer 4 invariants for the Covenant pipeline's **already-implemented** phases and the Docker platform layer. Theory and taxonomy: [Invariant_Authorship.md](../../../Notes/meta/Invariant_Authorship.md). Audit mechanisms: [Layer4_TypeB_Auditing.md](../../../Notes/meta/Layer4_TypeB_Auditing.md). Pipeline phase structure: [Math_Application_Pipeline.md](math/Math_Application_Pipeline.md); container formalism: [Math_Containerization.md](math/Math_Containerization.md).
 
-## Enforcement status (as of 2026-07-03)
+## Enforcement status (as of 2026-07-05)
 
-Partially enforced. **Existing:** Pydantic schemas at the LLM boundary (`covenant_pipeline/schemas/` — domain and cardinality invariants); an integrity-audit phase (`phases/audit.py`, cross-reference resolution over the compiled payload); an actor-critic validation agent. **Absent:** everything below — no property-based testing (no Hypothesis), no chunker/router invariant tests, no provenance grounding check, no container parity test.
+**Stage 0 partially implemented** in `covenant_pipeline/tests/invariants/` (pytest). **Named tests:** `chunker-coverage-audit` (non-empty `Raw_Text` per skeleton row), `provenance-grounding` (receipt-joined substring check on fixtures), `container-parity` (host reproducibility; docker parity skips if unavailable). **Mutation drill v0:** baseline recorded 2026-07-05 — M1/M3/M8 class killed; M2/M5/M6/M7 survived (expected until `chunker-partition`, `glossary-acyclic`, `config-totality` land).
+
+**Still absent:** `chunker-partition`, `router-rule-dispatch`, `glossary-acyclic`, `metamorphic-stability` tests; full TOC body-scan reconciliation; Hypothesis property tests. **Existing (unchanged):** Pydantic schemas at LLM boundary; integrity-audit phase; actor-critic validation agent.
 
 ## Pipeline invariants (implemented phases)
 
@@ -72,7 +74,9 @@ Candidates 9–11 graduate to frontmatter `invariants:` entries when the platfor
 
 ## First rep
 
-Implement the **non-empty-extraction check** from `chunker-coverage-audit` first — it is the cheapest test in the inventory and guards the scariest failure (silent covenant omission). Then `provenance-grounding` (pipeline side) and `container-parity` (platform side). Then mutation drills: an agent deliberately drops a TOC section, reorders chunks, fabricates a citation span, or perturbs the container env; the suite must go red. Track kill rate per invariant.
+**Done (2026-07-05):** Stage 0 tests for `chunker-coverage-audit`, `provenance-grounding`, `container-parity` (host). Mutation drill v0 baseline: [Covenant_Pipeline/tests/mutation/reports/2026-07-05-baseline.md](https://github.com/endisciple13/covenant_pipeline/blob/main/tests/mutation/reports/2026-07-05-baseline.md).
+
+**Next:** implement surviving-mutant targets (`chunker-partition` for M2/M7, `config-totality` for M6, `glossary-acyclic` for M5); extend `chunker-coverage-audit` with TOC body-scan reconciliation; commit Hallador PDF via Git LFS for full-fidelity runs.
 
 ## Related Notes
 

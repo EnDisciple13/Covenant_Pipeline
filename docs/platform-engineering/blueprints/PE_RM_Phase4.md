@@ -28,7 +28,9 @@ Where:
 - $f_2 : X_{linted} \to X_{audited}$ — deterministic integrity audit (`audit.py`)
 - $f_3 : X_{audited} \to X_{built}$ — Docker image build
 
-**The Bottom Type ($\bot$):** If $f_2$ fails (dangling pointers, circular references, type violations in compiled payload), the morphism evaluates to $\bot$. Because $f_3$ requires domain $X_{audited}$ and $\bot \neq X_{audited}$, the composition $CI_{eval}$ is **undefined** — the pipeline halts. Unproven code cannot proceed to build or deploy.
+**The Bottom Type ($\bot$):** If $f_2$ fails (dangling pointers, circular references, type violations in compiled payload), the morphism evaluates to $\bot$. Because $f_3$ requires domain $X_{audited}$ and $\bot \neq X_{audited}$, the composition $CI_{eval}$ is **undefined** — the pipeline halts.
+
+> **Scope correction (2026-07-04):** as specified in Job 1, $f_2$ runs `audit.py` against a *committed fixture*, so what is actually proven per commit is "the audit tool still passes on known-good data" — a regression test of the auditor, not an audit of artifacts this commit produced. The strong reading ("unproven artifacts cannot deploy") requires a release-level gate: run the audit against the payload the deployed pipeline actually produces (post-`run-task` against S3 output, or as a final step of the pipeline task itself). Tracked as follow-on work; until then, the formalization above describes the **target** gate, not the implemented one.
 
 **The Deployment Functor:** Let $\mathcal{C}_{valid} \subset \mathcal{C}$ be the subcategory of commits that passed $CI_{eval}$. The CD pipeline is a functor:
 
@@ -78,7 +80,7 @@ restricted to validated code only. Phase 3's Terraform functor $F$ executes the 
 
 - **Trigger:** `push` to `main`
 - **Jobs:** Full pipeline — Audit → Build → Push → Deploy
-- **Concurrency:** `group: deploy-${{ github.ref }}` with `cancel-in-progress: true` (prevent overlapping deploys)
+- **Concurrency:** `group: deploy-${{ github.ref }}` with `cancel-in-progress: false` — queue, don't cancel (corrected 2026-07-04: cancelling a run mid-`terraform apply` can leave a locked state file and a half-applied topology; the concurrency group already prevents overlap)
 
 **Reasoning:** Separating PR checks from deploy workflow follows the $\mathcal{C}_{valid}$ restriction — only merged code reaches $F_{deploy}$.
 
@@ -146,8 +148,8 @@ restricted to validated code only. Phase 3's Terraform functor $F$ executes the 
     2. Setup Terraform (`hashicorp/setup-terraform`)
     3. `cd infra/terraform`
     4. `terraform init`
-    5. `terraform plan -var="backend_image_tag=${{ github.sha }}" -var="frontend_image_tag=${{ github.sha }}" -var-file=environments/dev/terraform.tfvars`
-    6. `terraform apply -auto-approve` (dev only; prod requires manual approval gate)
+    5. `terraform plan -out=tfplan -var="backend_image_tag=${{ github.sha }}" -var="frontend_image_tag=${{ github.sha }}" -var-file=environments/dev/terraform.tfvars`
+    6. `terraform apply tfplan` (dev only; prod requires manual approval gate. Corrected 2026-07-04: applying the saved plan makes step 5 the actual reviewed artifact — a bare `apply -auto-approve` re-plans from scratch and ignores step 5 entirely)
     7. Output ALB DNS for smoke test comment on commit
 
 - **ECS rolling update:** Terraform updates task definition image tags → ECS service triggers rolling deployment → old tasks drain, new tasks start
@@ -159,9 +161,10 @@ restricted to validated code only. Phase 3's Terraform functor $F$ executes the 
 **Purpose:** Confirm the deployment functor produced a reachable system.
 
 - **Optional Job 5: `smoke-test`** (needs `deploy-infrastructure`)
-- **Checks:**
-    - `curl -f https://{alb_dns}/api/pipeline-summary` — backend responds (may 404 if no artifacts in S3 yet; 502 = failure)
-    - `curl -f https://{alb_dns}/` — frontend serves HTML
+- **Checks (corrected 2026-07-04 — `curl -f` fails on 404, contradicting the documented acceptable-404 case; test status codes explicitly):**
+    - `code=$(curl -s -o /dev/null -w "%{http_code}" {scheme}://{alb_dns}/api/pipeline-summary)` — pass on `200` or `404` (no artifacts in S3 yet), fail on `5xx` or timeout
+    - `curl -fsS {scheme}://{alb_dns}/` — frontend serves HTML
+    - `{scheme}` follows the Phase 2/3 domain decision: `https` only when `domain_name` is set (ACM cannot issue a cert for the raw ALB DNS name); otherwise `http`
 - **Notify:** GitHub commit status or Slack webhook on failure
 
 **Reasoning:** Closes the control loop — verifies $I_{desired}$ is actually reachable, not just that Terraform reported success.
@@ -212,3 +215,12 @@ flowchart TD
 - OIDC setup walkthrough (recommended for prod, not specified here)
 - Pipeline `run-task` automation via EventBridge (on-demand extraction trigger — future enhancement)
 - Blue/green or canary ECS deployments (rolling update sufficient for PoC)
+
+## VIII. Design Audit Notes (2026-07-04)
+
+External design review prior to implementation; corrections applied in place:
+
+1. **Smoke test rewritten** (§III Step C) — `curl -f` fails on the documented-acceptable 404; status codes are now checked explicitly, and the URL scheme follows the Phase 2/3 domain decision.
+2. **Deploy concurrency changed to queue** (`cancel-in-progress: false`) — cancelling mid-`apply` risks a locked state file and half-applied topology.
+3. **`plan -out` / `apply tfplan` pattern adopted** — the previous step pair re-planned at apply time, making the reviewed plan decorative.
+4. **$\bot$-gate scope corrected** (§I) — the fixture audit is a regression test of the auditor, not a release audit; the strong guarantee is reclassified as the target gate, with a release-level audit tracked as follow-on work.

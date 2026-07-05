@@ -45,7 +45,7 @@ Cursor must generate the following directory structure within the existing repos
 │       ├── providers.tf            # AWS provider configuration
 │       ├── backend.tf              # Remote state: S3 bucket + DynamoDB lock table
 │       ├── versions.tf             # Terraform and provider version constraints
-│       └── modules/
+│       ├── modules/
 │           ├── network/            # VPC, subnets, IGW, NAT, ALB, security groups
 │           │   ├── main.tf
 │           │   ├── variables.tf
@@ -70,13 +70,11 @@ Cursor must generate the following directory structure within the existing repos
 │               ├── main.tf
 │               ├── variables.tf
 │               └── outputs.tf
-└── infra/
-    └── terraform/
-        └── environments/
-            ├── dev/
-            │   └── terraform.tfvars    # Dev-specific variable values
-            └── prod/
-                └── terraform.tfvars    # Prod-specific variable values
+│       └── environments/
+│           ├── dev/
+│           │   └── terraform.tfvars    # Dev-specific variable values
+│           └── prod/
+│               └── terraform.tfvars    # Prod-specific variable values
 ```
 
 ## III. Component Specifications
@@ -91,6 +89,8 @@ Cursor must generate the following directory structure within the existing repos
     - **State storage:** S3 bucket `covenant-pipeline-tfstate-{account-id}` (versioning enabled, encryption SSE-S3)
     - **State locking:** DynamoDB table `covenant-pipeline-tflock` (prevents concurrent `apply` corruption)
     - **Key:** `env/{environment}/terraform.tfstate` (separate state per environment)
+    - **Bootstrap (added 2026-07-04):** the state bucket and lock table cannot be created by the Terraform they back (chicken-and-egg). Create them once, out-of-band, *before* the first `terraform init` — via AWS CLI (`aws s3api create-bucket` + `aws dynamodb create-table`) or a tiny separate bootstrap stack with local state. This is the standard, documented exception to the no-manual-changes rule.
+    - **Locking alternative (added 2026-07-04):** Terraform ≥ 1.10 supports native S3 state locking (`use_lockfile = true`), which removes the DynamoDB table entirely; DynamoDB locking still works and remains acceptable here.
 
 - **Input variables (`variables.tf`):**
 
@@ -114,7 +114,8 @@ Cursor must generate the following directory structure within the existing repos
 - `aws_subnet` — 2 public + 2 private across 2 AZs
 - `aws_internet_gateway`, `aws_nat_gateway`, `aws_eip`
 - `aws_lb` (Application Load Balancer) — public-facing
-- `aws_lb_listener` — HTTPS :443 with ACM certificate
+- `aws_lb_listener` — HTTPS :443 with ACM certificate when `domain_name` is set; HTTP :80 fallback otherwise (corrected 2026-07-04 — an unconditional HTTPS listener fails `apply` with no certificate; see the ACM prerequisite in [PE_RM_Phase2.md](PE_RM_Phase2.md))
+- `aws_acm_certificate` + `aws_acm_certificate_validation` — conditional on `domain_name` (added 2026-07-04; previously absent from the inventory despite the listener consuming a certificate — a violation of this blueprint's own `iac-topology-parity` invariant)
 - `aws_lb_listener_rule` — path `/api/*` → backend TG; `/*` → frontend TG
 - `aws_lb_target_group` — backend (:8000) and frontend (:80)
 - `aws_security_group` — ALB, backend, frontend (least-privilege ingress)
@@ -238,3 +239,12 @@ flowchart TD
 - `terraform import` of existing resources
 - Multi-account AWS Organizations / cross-account IAM
 - Terraform Cloud / HCP Terraform (remote backend uses S3 + DynamoDB directly)
+
+## VI. Design Audit Notes (2026-07-04)
+
+External design review prior to implementation; corrections applied in place:
+
+1. **State-backend bootstrap documented** (§III Step A) — the chicken-and-egg was previously unstated and would stall the first `terraform init`.
+2. **ACM certificate resources added to the network module inventory** — their absence violated `iac-topology-parity` (the HTTPS listener consumed a certificate no module declared); listener is now conditional on `domain_name`.
+3. **Native S3 state locking noted** as a DynamoDB alternative (Terraform ≥ 1.10).
+4. **§II file tree fixed** — a duplicated `infra/` subtree (generation artifact) merged; `environments/` sits inside the single `infra/terraform/` directory.

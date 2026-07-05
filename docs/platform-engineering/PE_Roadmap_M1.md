@@ -24,6 +24,8 @@ Planning docs for the infrastructure layer. Phase 1 implementation: see [Docker_
 | Phase 3: Infrastructure as Code (Terraform) | [PE_RM_Phase3.md](blueprints/PE_RM_Phase3.md) | Design only |
 | Phase 4: CI/CD Orchestration | [PE_RM_Phase4.md](blueprints/PE_RM_Phase4.md) | Design only |
 
+> **Design audit (2026-07-04):** all four blueprints reviewed pre-implementation; seven defects corrected in place — see each blueprint's *Design Audit Notes* section. Notable: Mountpoint-for-S3 is not Fargate-compatible (Phase 2), HTTPS/ACM requires an owned domain (Phases 2–4), the Terraform state backend needs out-of-band bootstrap (Phase 3), and the CI audit gate as specified is fixture-scoped, not release-scoped (Phase 4).
+
 ### I. The Setup & Goal
 
 **The Setup:** The Application Layer is complete. You have a deterministic Credit Agreement Python engine, a FastAPI backend, and a React frontend. Currently, this exists as raw code (morphisms) executing in the highly volatile, un-closed ambient environment of your local operating system.

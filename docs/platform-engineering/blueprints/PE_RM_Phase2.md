@@ -148,6 +148,8 @@ AWS Account (target)
 - **Private subnets (2 AZs):** ECS tasks
 - **ALB listener rules:**
     - `HTTPS :443` → ACM certificate (TLS termination at load balancer)
+
+    > **Prerequisite (added 2026-07-04):** a public ACM certificate requires an *owned domain* plus DNS validation — ACM will not issue a cert for the raw ALB DNS name. Without a domain, fall back to an `HTTP :80` listener for the PoC (and adjust the Phase 4 smoke-test scheme accordingly). `domain_name` in Phase 3 is optional only if this HTTP fallback is accepted.
     - Path `/api/*` → backend target group (port 8000)
     - Path `/*` → frontend target group (port 80)
 - **Security groups:**
@@ -155,6 +157,8 @@ AWS Account (target)
     - Backend SG: inbound 8000 from ALB SG only
     - Frontend SG: inbound 80 from ALB SG only
     - Egress: backend/pipeline tasks need outbound HTTPS to `generativelanguage.googleapis.com` (Gemini API) via NAT Gateway
+
+    > **Personal-account deviation (added 2026-07-04):** a NAT Gateway costs ~$35/month plus data transfer — correct for the enterprise target, hostile to a personal PoC. For home implementation reps, run tasks in public subnets with public IPs (no NAT) and record the deviation; restore the private-subnet + NAT topology for the enterprise variant.
 
 **Reasoning:** Private subnets for compute follow banking security baseline. ALB path-based routing replaces Nginx's internal `proxy_pass http://backend:8000` — in cloud, the ALB performs this split instead of frontend Nginx proxying to backend (alternative: keep Nginx proxy and route all traffic to frontend only; ALB split is cleaner for independent scaling).
 
@@ -184,7 +188,9 @@ AWS Account (target)
     - `s3://.../out/` — all pipeline artifacts (see PipelinePaths constants in [PROJECT_DOCUMENTATION.md](https://github.com/endisciple13/covenant_pipeline/blob/main/PROJECT_DOCUMENTATION.md))
 - **Sync strategy (choose one at implementation):**
     - **Option A (recommended for PoC):** Pipeline `run-task` downloads PDF from S3 to `/app/data/`, runs extraction, uploads `out/` back to S3 on completion. Backend task syncs `out/` from S3 at startup or on interval.
-    - **Option B:** Mount S3 via Mountpoint for Amazon S3 (Fargate-compatible POSIX mount) — simpler code changes, newer AWS feature.
+
+    > **Scoped application work (added 2026-07-04):** Option A is not infra-only — it requires application-layer changes scoped nowhere else: S3 download/upload (boto3) in the pipeline entrypoint, and an `out/` sync step in backend startup. Budget this as an explicit work item alongside Phase 2 implementation; otherwise the infrastructure deploys green and the app finds no files.
+    - **Option B (corrected 2026-07-04):** ~~Mountpoint for Amazon S3 (Fargate-compatible POSIX mount)~~ — **not Fargate-compatible.** Mountpoint requires FUSE and privileged containers, which Fargate does not support ([containers-roadmap #412](https://github.com/aws/containers-roadmap/issues/412), [mountpoint-s3 #450](https://github.com/awslabs/mountpoint-s3/issues/450)). Fargate-native alternatives if a POSIX mount is truly needed: **EFS volume** (supported on Fargate), or evaluate the newer NFS-based Amazon S3 Files offering. Option A remains the recommendation.
 
 **Reasoning:** Artifact persistence must survive task termination. S3 is the cloud-native equivalent of the host volume, with versioning for audit trail in a banking context.
 
@@ -222,3 +228,12 @@ flowchart TB
 - CI/CD automation (Phase 4)
 - Multi-region deployment, WAF, CloudFront CDN
 - Azure equivalents (ACR, Container Apps) — AWS chosen for this blueprint series
+
+## VI. Design Audit Notes (2026-07-04)
+
+External design review prior to implementation; corrections applied in place, marked "added/corrected 2026-07-04":
+
+1. **Mountpoint-on-Fargate claim removed** (§III Step C, Persistence Option B) — verified false against AWS documentation; Fargate does not support FUSE/privileged containers.
+2. **Option A application work scoped** — S3 sync is an application-layer change, not infrastructure; previously unbudgeted.
+3. **ACM/domain prerequisite made explicit** — the HTTPS listener is not implementable without an owned domain.
+4. **NAT Gateway personal-account deviation documented** — cost trap for home implementation.

@@ -9,7 +9,7 @@ dependencies:
 tags: []
 invariants:
   - id: image-determinism
-    statement: "Same Dockerfile and lockfile inputs produce identical image digests on rebuild"
+    statement: "Base image pinned by digest and dependencies locked; a built image digest is the immutable deployment artifact (functional reproducibility - bitwise-identical rebuild digests are not guaranteed by Docker)"
   - id: host-isolation
     statement: "Container runtime does not require host-global Python or Node installations"
 ---
@@ -105,3 +105,7 @@ Plaintext
     - Dependencies: Use `depends_on: backend` to ensure the API is running before the UI starts.
         
     - Environment / Proxy: Configure Vite/Nginx so that frontend calls to `/api/*` are routed internally to the `backend` service container on port 8000.
+
+## Design Audit Notes (2026-07-04)
+
+- **`image-determinism` invariant restated.** The original claim — same Dockerfile + lockfile produce *identical image digests on rebuild* — is empirically false: Docker builds are not bit-reproducible by default (mutable base tags like `python:3.11-slim`, unpinned pip resolution, embedded timestamps). Corrected to the enforceable form already anticipated by [PE_Invariant_Suite.md](../PE_Invariant_Suite.md) candidate #10: pin the base image by digest, lock dependencies, and treat the *built* digest (not a rebuild) as the immutable deployment artifact.

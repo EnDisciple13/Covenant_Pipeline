@@ -1,0 +1,16 @@
+{
+  "Document_Metadata": {
+    "Audit_Status": "Test_Fixture_Trap",
+    "Pipeline_Version": "invariant-test"
+  },
+  "Phase1_Extracted_Covenants": [
+    {
+      "Receipt": "PDF Pages 15-21 (Printed Pages 5-11) | Article 7: Covenants | Section 7.1: Total Leverage Ratio",
+      "Agent": "TotalLeverageRatio",
+      "Extracted_Data": {
+        "ratio_limit": 4.5,
+        "definition": "COMPLETELY FABRICATED COVENANT LANGUAGE NOT IN SOURCE"
+      }
+    }
+  ]
+}
