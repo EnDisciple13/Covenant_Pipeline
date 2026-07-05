@@ -11,7 +11,7 @@ invariants:
   - id: host-isolation
     statement: "Runtime dependency context Gamma_container is disjoint from host runtime-deps Gamma_host; data I/O bind mounts are explicit dev exceptions"
   - id: eval-morphism
-    statement: "Generic eval_{D,Y} connects exponential objects; Backend/Frontend pair is the covenant_pipeline instantiation"
+    statement: "RESTATED 2026-07-05 (original categorical form fell to wall 3 of the transfer test; audit adjudication 2026-07-05): the platform layer invokes containers only through the OCI runtime contract (image + run interface); a changed application image redeploys with zero platform-layer change. Backend/Frontend pair is the covenant_pipeline instantiation"
 mappings:
   - id: container-exponential-object
     statement: "Docker image <-> exponential object Y^D in a CCC; docker build <-> internalization; docker run <-> eval morphism"
