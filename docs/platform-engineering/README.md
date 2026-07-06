@@ -32,6 +32,7 @@ This is tracked naming debt, deliberately deferred — not an accident. The volu
 | Phase 3: Terraform blueprint | [blueprints/PE_RM_Phase3.md](blueprints/PE_RM_Phase3.md) | [PE_RM_Phase3.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md) |
 | Phase 4: CI/CD blueprint | [blueprints/PE_RM_Phase4.md](blueprints/PE_RM_Phase4.md) | [PE_RM_Phase4.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase4.md) |
 | Invariant suite (pipeline + Docker) | [PE_Invariant_Suite.md](PE_Invariant_Suite.md) | [PE_Invariant_Suite.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/PE_Invariant_Suite.md) |
+| Property test specs (Hypothesis) | [blueprints/PE_Property_Test_Specs.md](blueprints/PE_Property_Test_Specs.md) | [PE_Property_Test_Specs.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_Property_Test_Specs.md) |
 
 ## Math (canonical in Notes, mirrored to covenant_pipeline)
 

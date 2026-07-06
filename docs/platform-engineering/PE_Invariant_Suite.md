@@ -34,11 +34,11 @@ invariants:
 
 > Applied inventory of Layer 4 invariants for the Covenant pipeline's **already-implemented** phases and the Docker platform layer. Theory and taxonomy: [Invariant_Authorship.md](../../../Notes/meta/Invariant_Authorship.md). Audit mechanisms: [Layer4_TypeB_Auditing.md](../../../Notes/meta/Layer4_TypeB_Auditing.md). Pipeline phase structure: [Math_Application_Pipeline.md](math/Math_Application_Pipeline.md); container formalism: [Math_Containerization.md](math/Math_Containerization.md).
 
-## Enforcement status (as of 2026-07-05)
+## Enforcement status (as of 2026-07-06)
 
-**Stage 0 partially implemented** in `covenant_pipeline/tests/invariants/` (pytest). **Named tests:** `chunker-coverage-audit` (non-empty `Raw_Text` per skeleton row), `provenance-grounding` (receipt-joined substring check on fixtures), `container-parity` (host reproducibility; docker parity skips if unavailable). **Mutation drill v0:** baseline recorded 2026-07-05 — M1/M3/M8 class killed; M2/M5/M6/M7 survived (expected until `chunker-partition`, `glossary-acyclic`, `config-totality` land).
+**Hypothesis property suite implemented** in `covenant_pipeline/tests/invariants/` (pytest + hypothesis). **Named tests:** `metamorphic-stability`, `chunker-partition`, `chunker-coverage-audit` (stage 2 body-scan reconciliation), `router-rule-dispatch`, `glossary-acyclic`, `config-totality`, `provenance-grounding`, `container-parity`, `phase-composition`, `staging-parity`; legacy Stage 0 anchors retained. **Mutation drill 2026-07-06:** M2/M5/M6/M7 killed (property-tests report). M1/M3/M8 class remain killed.
 
-**Still absent:** `chunker-partition`, `router-rule-dispatch`, `glossary-acyclic`, `metamorphic-stability` tests; full TOC body-scan reconciliation; Hypothesis property tests. **Existing (unchanged):** Pydantic schemas at LLM boundary; integrity-audit phase; actor-critic validation agent.
+**Spec defects (reported, not patched ad hoc):** whitespace-only `GEMINI_API_KEY` accepted (`config-totality` P4 xfail). **Existing (unchanged):** Pydantic schemas at LLM boundary; integrity-audit phase; actor-critic validation agent.
 
 ## Pipeline invariants (implemented phases)
 
@@ -74,9 +74,9 @@ Candidates 9–11 graduate to frontmatter `invariants:` entries when the platfor
 
 ## First rep
 
-**Done (2026-07-05):** Stage 0 tests for `chunker-coverage-audit`, `provenance-grounding`, `container-parity` (host). Mutation drill v0 baseline: [Covenant_Pipeline/tests/mutation/reports/2026-07-05-baseline.md](https://github.com/endisciple13/covenant_pipeline/blob/main/tests/mutation/reports/2026-07-05-baseline.md).
+**Done (2026-07-06):** Hypothesis property suite per [PE_Property_Test_Specs.md](blueprints/PE_Property_Test_Specs.md); mutation drill M2/M5/M6/M7 killed ([report](https://github.com/endisciple13/covenant_pipeline/blob/main/tests/mutation/reports/2026-07-06-property-tests.md)).
 
-**Next:** implement surviving-mutant targets (`chunker-partition` for M2/M7, `config-totality` for M6, `glossary-acyclic` for M5); extend `chunker-coverage-audit` with TOC body-scan reconciliation; commit Hallador PDF via Git LFS for full-fidelity runs.
+**Next:** M4 compile-stage type-safety property; Hallador PDF via Git LFS; address config-totality whitespace-only env defect.
 
 ## Related Notes
 
