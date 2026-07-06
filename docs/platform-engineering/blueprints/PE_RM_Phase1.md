@@ -6,12 +6,54 @@ type: blueprint
 status: draft
 dependencies:
   - math/platform-engineering/Math_Containerization.md
+  - projects/covenant/platform-engineering/PE_Invariant_Suite.md
 tags: []
 invariants:
   - id: image-determinism
     statement: "Base image pinned by digest and dependencies locked; a built image digest is the immutable deployment artifact (functional reproducibility - bitwise-identical rebuild digests are not guaranteed by Docker)"
   - id: host-isolation
     statement: "Container runtime does not require host-global Python or Node installations"
+inherited_invariants:
+  - id: host-isolation
+    from: math/platform-engineering/Math_Containerization.md
+    status: planned
+    enforced_by: "tests/platform/test_host_isolation.py::test_runtime_deps_disjoint_from_host"
+  - id: eval-morphism
+    from: math/platform-engineering/Math_Containerization.md
+    status: waived
+    note: "Phase 1 validates container packaging and compose topology; categorical eval-morphism transfer is deferred to property-test specs."
+  - id: provenance-grounding
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: enforced
+    enforced_by: "tests/invariants/test_provenance_grounding.py::test_provenance_grounding_detects_fabricated_span"
+  - id: chunker-partition
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: planned
+    enforced_by: "tests/invariants/test_chunker_partition.py::test_partition_monotone_nonoverlap"
+  - id: chunker-coverage-audit
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: enforced
+    enforced_by: "tests/invariants/test_chunker_coverage_audit.py::test_chunker_coverage_audit_non_empty_extraction"
+  - id: router-rule-dispatch
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: planned
+    enforced_by: "tests/invariants/test_router_rule_dispatch.py::test_single_dispatch_or_abstain"
+  - id: glossary-acyclic
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: planned
+    enforced_by: "tests/invariants/test_glossary_acyclic.py::test_definition_graph_dag"
+  - id: metamorphic-stability
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: planned
+    enforced_by: "tests/invariants/test_metamorphic_stability.py::test_reflow_prefix_invariant"
+  - id: container-parity
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: enforced
+    enforced_by: "tests/invariants/test_container_parity.py::test_container_parity_host_reproducible"
+  - id: config-totality
+    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    status: planned
+    enforced_by: "tests/invariants/test_config_totality.py::test_missing_env_fails_fast"
 ---
 # Technical Blueprint: Phase 1 - Local Containerization
 
