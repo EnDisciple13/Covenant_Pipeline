@@ -45,6 +45,7 @@ Expected initial result: **M2, M6, M7 likely survive** until their invariant tes
 | Date | Report | Model/agent | Kill rate | Survivors |
 |------|--------|-------------|-----------|-----------|
 | 2026-07-05 | [2026-07-05-baseline.md](reports/2026-07-05-baseline.md) | Composer 2.5 | M1/M3/M8 class killed; M2/M5/M6/M7 survived (expected) | M2, M5, M6, M7 |
+| 2026-07-06 | [2026-07-06-property-tests.md](reports/2026-07-06-property-tests.md) | Composer | M2/M5/M6/M7 killed (property suite) | — |
 
 Re-run after: new invariant tests, suite changes, model change (if drills are agent-applied). Each re-run should add ≥1 new mutation matching current failure sophistication — a static mutation list decays into a passed test.
 
