@@ -32,6 +32,19 @@ def _artifact_hashes(directory: Path) -> dict[str, str]:
     return {name: file_sha256(directory / name) for name in SKIP_LLM_ARTIFACTS}
 
 
+def test_container_parity_host_reproducible_property(tmp_path):
+    """Duplicate skip-llm runs in fresh dirs yield identical artifact hashes."""
+    if not SYNTHETIC_PDF.is_file():
+        pytest.skip("synthetic PDF missing")
+    pdf = tmp_path / "input.pdf"
+    shutil.copy(SYNTHETIC_PDF, pdf)
+    out_a = tmp_path / "run_a"
+    out_b = tmp_path / "run_b"
+    _run_host_skip_llm(out_a, pdf)
+    _run_host_skip_llm(out_b, pdf)
+    assert _artifact_hashes(out_a) == _artifact_hashes(out_b)
+
+
 def test_container_parity_host_reproducible(synthetic_pdf):
     """Same PDF run twice on host yields identical skip-llm artifacts."""
     pdf = synthetic_pdf.pdf_path
