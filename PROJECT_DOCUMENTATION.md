@@ -62,6 +62,7 @@
     - [Module 6: Presentation Helpers](#module-6-presentation-helpers)
     - [Module 7: UI Layout](#module-7-ui-layout)
     - [Launch](#launch)
+  - [Review ledger](#review-ledger)
   - [HTML Audit Report](#html-audit-report)
 
 - [Future Roadmap (Not Yet Implemented)](#future-roadmap-not-yet-implemented)
@@ -707,6 +708,8 @@ Installed as `covenant-pipeline` via `pyproject.toml` → `covenant_pipeline.cli
 * **`GET /api/document-data`:** Returns `final_compiled_payload_audited.json`
 * **`GET /api/pdf`:** Streams source PDF bytes
 * **`GET /api/pipeline-summary`:** Aggregates covenant count, validation pass/fail, extraction cost, dispatch envelope count
+* **`POST /api/review`:** Appends one analyst verdict row to the review ledger (JSONL)
+* **`GET /api/review`:** Returns all ledger rows (oldest first, newest last)
 
 **Environment variables** (set by `config.viewer_env()` when launching):
 
@@ -714,18 +717,19 @@ Installed as `covenant-pipeline` via `pyproject.toml` → `covenant_pipeline.cli
 |----------|---------|
 | `COVENANT_AUDITED_JSON` | Path to audited JSON |
 | `COVENANT_PDF_PATH` | Path to source PDF |
-| `COVENANT_OUTPUT_DIR` | Output dir (for dispatch queue stats) |
+| `COVENANT_OUTPUT_DIR` | Output dir (for dispatch queue stats and default ledger path) |
 | `COVENANT_DISPATCH_QUEUE_JSON` | Path to dispatch queue JSON |
+| `COVENANT_REVIEW_LEDGER` | Optional explicit path to `review_ledger.jsonl`; default `{COVENANT_OUTPUT_DIR}/review/review_ledger.jsonl` |
 
 ### **Module 3: Application State (`useState`)**
 
-* **What it does:** Holds payload, pipeline summary, selected covenant, glossary term, loading/error flags.
+* **What it does:** Holds payload, pipeline summary, selected covenant, glossary term, review ledger rows, correction draft state, loading/error flags.
 * **Why it's there:** Drives React re-renders on user interaction and API load.
 
 ### **Module 4: Backend Initialization (`useEffect`)**
 
-* **What it does:** Parallel `fetch` to `/api/document-data` and `/api/pipeline-summary` on mount.
-* **Why it's there:** Loads pipeline output into frontend memory via Vite proxy to `localhost:8000`.
+* **What it does:** Parallel `fetch` to `/api/document-data`, `/api/pipeline-summary`, and `/api/review` on mount.
+* **Why it's there:** Loads pipeline output and recorded analyst verdicts into frontend memory via Vite proxy to `localhost:8000`.
 
 ### **Module 5: Data Transformation Engine (`useMemo`)**
 
@@ -742,9 +746,9 @@ Installed as `covenant-pipeline` via `pyproject.toml` → `covenant_pipeline.cli
 ### **Module 7: UI Layout**
 
 * **Pipeline Run Summary (collapsible):** Audit status, covenant count, validation pass/fail, extraction cost.
-* **Column 1 — Phase 1 Queue:** Covenant navigation with receipt page/section split.
+* **Column 1 — Phase 1 Queue:** Covenant navigation with receipt page/section split and **Reviewed** badges.
 * **Column 2 — Document Provenance:** Stacked PDF pages from `/api/pdf`.
-* **Column 3 — Audit & Glossary:** Validation badge, formatted extraction, glossary term selector.
+* **Column 3 — Audit & Glossary:** Validation badge, **analyst review controls** (Approve / Correct), formatted extraction, glossary term selector.
 
 ### **Launch**
 
@@ -756,6 +760,76 @@ covenant-pipeline run --pdf agreement.pdf --serve-ui
 
 * Backend: `uvicorn main:app` on `http://127.0.0.1:8000`
 * Frontend: `npm run dev` on `http://localhost:5173`
+
+## **Review ledger**
+
+**Modules:** `viewer/backend/main.py`, `viewer/frontend/src/App.jsx`, `scripts/grade_against_ledger.py`, `tests/test_review_ledger.py`, `tests/test_grade_against_ledger.py`
+
+* **What it does:** Records human analyst verdicts (`approved` or `corrected`) as append-only JSONL — the empirical coupling for Layer 4 external validation. The viewer writes rows; a grading script compares later pipeline output against recorded truth.
+* **Why it's there:** LLM `Validation_Audit` scores are internal verification; the ledger closes the outer loop on independent analyst judgment without auto-applying corrections.
+
+### Ledger location
+
+| Resolution order | Path |
+|------------------|------|
+| `COVENANT_REVIEW_LEDGER` set | Explicit file path |
+| `COVENANT_OUTPUT_DIR` set | `{COVENANT_OUTPUT_DIR}/review/review_ledger.jsonl` |
+| Neither set | `POST /api/review` returns **500** with named error (config-totality — no silent default) |
+
+Parent directories are created on first write.
+
+### JSONL row schema (one row per covenant review)
+
+| Field | Source | Notes |
+|-------|--------|-------|
+| `document` | Server | Basename of `COVENANT_PDF_PATH` |
+| `covenant_agent` | Request | Agent name from payload |
+| `receipt` | Request | Receipt string |
+| `verdict` | Request | `approved` or `corrected` |
+| `corrections` | Request | Empty for `approved`; required for `corrected` |
+| `corrections[].field_path` | Request | Dot path into `Extracted_Data` |
+| `corrections[].ai_value` | Request | Value at review time |
+| `corrections[].corrected_value` | Request | Analyst value |
+| `corrections[].diagnostic_layer` | Request (optional) | `L0`, `L1`, `L2`, `L3`, or `unknown` |
+| `corrections[].analyst_note` | Request (optional) | Free-text why the AI value was wrong |
+| `analyst` | Request | Default `andy` |
+| `hat` | Request | Default `analyst` |
+| `critic_confidence` | Server (optional) | Copied from `Validation_Audit.confidence_score` |
+| `reviewed_at` | Server | ISO-8601 UTC timestamp |
+
+### Viewer UI
+
+When a covenant is selected in Column 3:
+
+* **Approve** — posts `verdict: approved` with empty corrections.
+* **Correct** — field-path dropdown (flattened `Extracted_Data`), corrected-value input, optional diagnostic-layer dropdown (default `unknown`), optional analyst-note textarea per correction; supports multiple corrections before submit.
+* **Reviewed badge** — queue and detail panel show **Reviewed** after a successful POST; already-reviewed covenants disable further submission.
+
+### Grading script
+
+Compare a pipeline payload against ledger truth for regression gating:
+
+```bash
+py scripts/grade_against_ledger.py --ledger <path> --payload <audited_json_path>
+```
+
+**Truth resolution** (latest row per `(document, covenant_agent)` wins):
+
+* **`approved`** — each leaf field in `Extracted_Data` is compared against the current payload value (analyst accepted as-is).
+* **`corrected`** — listed `field_path` entries use `corrected_value` as truth; unlisted fields use current payload values.
+* **No ledger row** — covenant counted as `unreviewed` (not a mismatch).
+
+**Comparison:** JSON-normalized string equality (`json.dumps` with `sort_keys=True` for objects/arrays).
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| `0` | Zero mismatches |
+| `1` | One or more mismatches |
+| `2` | Unreadable ledger or payload |
+
+**Output:** Per-field `MATCH`/`MISMATCH` lines plus summary `n match / m mismatch / k unreviewed`.
 
 ## **HTML Audit Report**
 
@@ -815,7 +889,7 @@ When Tier 2/3 are built, routing should follow the legacy **cascade** model: on 
 | Generation | Parallel extraction tournament + Rater Agent | Single-pass extraction (`extraction.py`) |
 | Deterministic gate | Pydantic + integrity audit | `schemas/covenants.py` + `audit.py` |
 | Fidelity gate | Rater / proofreader | LLM-as-Judge (`validation.py`) |
-| Human gate | Terminal UI | Covenant Viewer (`viewer/`) |
+| Human gate | Terminal UI | Covenant Viewer (`viewer/`) — analyst review ledger write path |
 
 The refactored PoC implements the **deterministic compiler** and **LLM critic** layers. The extraction tournament and Rater Agent remain on the roadmap (see Future Roadmap).
 

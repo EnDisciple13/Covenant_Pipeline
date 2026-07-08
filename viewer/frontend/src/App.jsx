@@ -17,6 +17,12 @@ function App() {
   const [selectedTerm, setSelectedTerm] = useState('');
   const [numPages, setNumPages] = useState(null);
 
+  const [reviews, setReviews] = useState([]);
+  const [reviewMode, setReviewMode] = useState('idle');
+  const [corrections, setCorrections] = useState([]);
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState(null);
+
   useEffect(() => {
     Promise.all([
       fetch('/api/document-data').then((res) => {
@@ -27,10 +33,15 @@ function App() {
         if (!res.ok) throw new Error('Failed to fetch pipeline summary');
         return res.json();
       }),
+      fetch('/api/review').then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch review ledger');
+        return res.json();
+      }),
     ])
-      .then(([data, summaryData]) => {
+      .then(([data, summaryData, reviewData]) => {
         setPayload(data);
         setSummary(summaryData);
+        setReviews(reviewData);
         setLoading(false);
       })
       .catch((err) => {
@@ -89,6 +100,179 @@ function App() {
   useEffect(() => {
     setSelectedTerm(availableTerms.length > 0 ? availableTerms[0] : '');
   }, [availableTerms]);
+
+  useEffect(() => {
+    setReviewMode('idle');
+    setCorrections([]);
+    setPostError(null);
+  }, [selectedCovenant]);
+
+  const skipFieldKeys = ['is_false_flag', 'false_flag_reason', 'is_applicable', 'confidence_score'];
+
+  const stringifyValue = (value) => {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
+  };
+
+  const flattenExtractedData = (data, prefix = '') => {
+    if (typeof data !== 'object' || data === null) {
+      return prefix ? [prefix] : [];
+    }
+
+    if (Array.isArray(data)) {
+      return data.flatMap((item, index) => {
+        const path = prefix ? `${prefix}.${index}` : String(index);
+        if (typeof item === 'object' && item !== null) {
+          return flattenExtractedData(item, path);
+        }
+        return [path];
+      });
+    }
+
+    return Object.entries(data).flatMap(([key, value]) => {
+      if (skipFieldKeys.includes(key.toLowerCase())) return [];
+      const path = prefix ? `${prefix}.${key}` : key;
+      if (typeof value === 'object' && value !== null) {
+        return flattenExtractedData(value, path);
+      }
+      return [path];
+    });
+  };
+
+  const getValueAtPath = (data, path) => {
+    if (!path) return undefined;
+    return path.split('.').reduce((current, segment) => {
+      if (current === null || current === undefined) return undefined;
+      if (Array.isArray(current)) {
+        const index = Number(segment);
+        return Number.isNaN(index) ? undefined : current[index];
+      }
+      return current[segment];
+    }, data);
+  };
+
+  const isReviewed = (cov, reviewRows) =>
+    reviewRows.some(
+      (row) => row.covenant_agent === cov.Agent && row.receipt === cov.Receipt,
+    );
+
+  const fieldPaths = useMemo(() => {
+    if (!selectedCovenant?.Extracted_Data) return [];
+    return flattenExtractedData(selectedCovenant.Extracted_Data).sort();
+  }, [selectedCovenant]);
+
+  const selectedCovenantReviewed = selectedCovenant ? isReviewed(selectedCovenant, reviews) : false;
+
+  const refreshReviews = () =>
+    fetch('/api/review')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to refresh review ledger');
+        return res.json();
+      })
+      .then((reviewData) => setReviews(reviewData));
+
+  const submitReview = async (verdict, correctionRows = []) => {
+    if (!selectedCovenant || posting) return;
+
+    setPosting(true);
+    setPostError(null);
+
+    try {
+      const response = await fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          covenant_agent: selectedCovenant.Agent,
+          receipt: selectedCovenant.Receipt,
+          verdict,
+          corrections: correctionRows,
+        }),
+      });
+
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        throw new Error(errBody.detail || 'Failed to submit review');
+      }
+
+      await refreshReviews();
+      setReviewMode('idle');
+      setCorrections([]);
+    } catch (err) {
+      setPostError(err.message);
+    } finally {
+      setPosting(false);
+    }
+  };
+
+  const startCorrecting = () => {
+    setReviewMode('correcting');
+    setCorrections([
+      {
+        field_path: fieldPaths[0] || '',
+        ai_value: stringifyValue(getValueAtPath(selectedCovenant?.Extracted_Data, fieldPaths[0])),
+        corrected_value: '',
+        diagnostic_layer: 'unknown',
+        analyst_note: '',
+      },
+    ]);
+    setPostError(null);
+  };
+
+  const updateCorrection = (index, field, value) => {
+    setCorrections((prev) =>
+      prev.map((row, i) => {
+        if (i !== index) return row;
+        const updated = { ...row, [field]: value };
+        if (field === 'field_path') {
+          updated.ai_value = stringifyValue(
+            getValueAtPath(selectedCovenant?.Extracted_Data, value),
+          );
+        }
+        return updated;
+      }),
+    );
+  };
+
+  const addCorrectionRow = () => {
+    const nextPath = fieldPaths.find((path) => !corrections.some((row) => row.field_path === path)) || '';
+    setCorrections((prev) => [
+      ...prev,
+      {
+        field_path: nextPath,
+        ai_value: stringifyValue(getValueAtPath(selectedCovenant?.Extracted_Data, nextPath)),
+        corrected_value: '',
+        diagnostic_layer: 'unknown',
+        analyst_note: '',
+      },
+    ]);
+  };
+
+  const submitCorrections = () => {
+    const payload = corrections
+      .filter((row) => row.field_path && row.corrected_value !== '')
+      .map((row) => {
+        const entry = {
+          field_path: row.field_path,
+          ai_value: row.ai_value,
+          corrected_value: row.corrected_value,
+        };
+        if (row.diagnostic_layer && row.diagnostic_layer !== 'unknown') {
+          entry.diagnostic_layer = row.diagnostic_layer;
+        }
+        if (row.analyst_note?.trim()) {
+          entry.analyst_note = row.analyst_note.trim();
+        }
+        return entry;
+      });
+
+    if (payload.length === 0) {
+      setPostError('Add at least one correction with a corrected value.');
+      return;
+    }
+
+    submitReview('corrected', payload);
+  };
 
   const formatAgentName = (name) => {
     if (!name) return 'Unknown Agent';
@@ -235,6 +419,7 @@ function App() {
           <div className="flex-1 overflow-y-auto pr-2 space-y-2">
             {uniqueCovenants.map((cov, index) => {
               const audit = getAuditInfo(cov);
+              const reviewed = isReviewed(cov, reviews);
               const receiptParts = cov.Receipt ? cov.Receipt.split('|') : [];
               const pageReceipt = receiptParts[0]?.trim();
               const sectionReceipt = receiptParts.slice(1).join(' | ').trim();
@@ -253,6 +438,11 @@ function App() {
                   <div className="font-semibold text-sm flex items-center justify-between gap-2">
                     <span>{formatAgentName(cov.Agent)}</span>
                     <span className="flex gap-1 shrink-0">
+                      {reviewed && (
+                        <span className="text-purple-300 text-xs bg-purple-900/30 px-2 py-0.5 rounded">
+                          Reviewed
+                        </span>
+                      )}
                       {audit.falseFlag && (
                         <span className="text-red-400 text-xs bg-red-900/30 px-2 py-0.5 rounded">Flagged</span>
                       )}
@@ -354,6 +544,127 @@ function App() {
                           ))}
                         </ul>
                       </div>
+                    )}
+                  </div>
+
+                  <div className="mb-4 bg-slate-900 border border-slate-700 p-3 rounded flex flex-col gap-3 shadow-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-400 uppercase tracking-wider font-bold">
+                        Analyst Review
+                      </span>
+                      {selectedCovenantReviewed && (
+                        <span className="text-purple-300 text-xs bg-purple-900/30 px-2 py-0.5 rounded">
+                          Reviewed
+                        </span>
+                      )}
+                    </div>
+
+                    {postError && (
+                      <div className="text-xs text-red-400 border border-red-800/50 bg-red-900/20 p-2 rounded">
+                        {postError}
+                      </div>
+                    )}
+
+                    {selectedCovenantReviewed ? (
+                      <div className="text-xs text-slate-400 italic">
+                        This covenant has a recorded analyst verdict.
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            disabled={posting}
+                            onClick={() => submitReview('approved')}
+                            className="flex-1 text-xs font-semibold px-3 py-2 rounded border border-green-600 bg-green-900/30 text-green-300 hover:bg-green-900/50 disabled:opacity-50"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            type="button"
+                            disabled={posting}
+                            onClick={() =>
+                              reviewMode === 'correcting' ? setReviewMode('idle') : startCorrecting()
+                            }
+                            className="flex-1 text-xs font-semibold px-3 py-2 rounded border border-yellow-600 bg-yellow-900/30 text-yellow-300 hover:bg-yellow-900/50 disabled:opacity-50"
+                          >
+                            {reviewMode === 'correcting' ? 'Cancel' : 'Correct'}
+                          </button>
+                        </div>
+
+                        {reviewMode === 'correcting' && (
+                          <div className="space-y-3 border-t border-slate-700 pt-3">
+                            {corrections.map((row, index) => (
+                              <div
+                                key={index}
+                                className="space-y-2 border border-slate-700/70 rounded p-2 bg-slate-800/40"
+                              >
+                                <select
+                                  className="w-full bg-slate-900 border border-slate-600 text-slate-200 text-xs rounded p-2 focus:ring-1 focus:ring-blue-500 outline-none"
+                                  value={row.field_path}
+                                  onChange={(e) => updateCorrection(index, 'field_path', e.target.value)}
+                                >
+                                  {fieldPaths.map((path) => (
+                                    <option key={path} value={path}>
+                                      {path}
+                                    </option>
+                                  ))}
+                                </select>
+
+                                <div className="text-xs text-slate-500">
+                                  AI value: <span className="text-slate-300">{row.ai_value || '—'}</span>
+                                </div>
+
+                                <input
+                                  type="text"
+                                  placeholder="Corrected value"
+                                  value={row.corrected_value}
+                                  onChange={(e) => updateCorrection(index, 'corrected_value', e.target.value)}
+                                  className="w-full bg-slate-900 border border-slate-600 text-slate-200 text-xs rounded p-2 focus:ring-1 focus:ring-blue-500 outline-none"
+                                />
+
+                                <select
+                                  className="w-full bg-slate-900 border border-slate-600 text-slate-200 text-xs rounded p-2 focus:ring-1 focus:ring-blue-500 outline-none"
+                                  value={row.diagnostic_layer}
+                                  onChange={(e) => updateCorrection(index, 'diagnostic_layer', e.target.value)}
+                                >
+                                  <option value="unknown">unknown</option>
+                                  <option value="L0">L0</option>
+                                  <option value="L1">L1</option>
+                                  <option value="L2">L2</option>
+                                  <option value="L3">L3</option>
+                                </select>
+
+                                <textarea
+                                  placeholder="Analyst note (optional)"
+                                  value={row.analyst_note}
+                                  onChange={(e) => updateCorrection(index, 'analyst_note', e.target.value)}
+                                  className="w-full bg-slate-900 border border-slate-600 text-slate-200 text-xs rounded p-2 min-h-[4rem] resize-y focus:ring-1 focus:ring-blue-500 outline-none"
+                                />
+                              </div>
+                            ))}
+
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                disabled={posting}
+                                onClick={addCorrectionRow}
+                                className="text-xs px-3 py-2 rounded border border-slate-600 text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+                              >
+                                + Add another
+                              </button>
+                              <button
+                                type="button"
+                                disabled={posting}
+                                onClick={submitCorrections}
+                                className="flex-1 text-xs font-semibold px-3 py-2 rounded border border-blue-500 bg-blue-900/40 text-blue-200 hover:bg-blue-900/60 disabled:opacity-50"
+                              >
+                                Submit corrections
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
