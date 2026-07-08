@@ -19,7 +19,9 @@ auto-synced into `covenant_pipeline/docs/platform-engineering/` by
 
 `platform-engineering` is the **umbrella strategy domain** for the entire Covenant project — application-layer strategy (the CA pipeline itself) and platform-layer strategy both mirror here. In milestone terms: the application layer is effectively **M0**, the current containerization/deployment work is **M1**, and true platform engineering (the IDP generalization) is **M2**.
 
-This is tracked naming debt, deliberately deferred — not an accident. The volume of application-layer strategy (currently one note, [PE_Invariant_Suite.md](PE_Invariant_Suite.md), which already separates pipeline vs platform invariants internally) does not yet justify a second domain. **Revisit when M2 work begins:** add a second mirror group for an application domain in `registry.yaml` (mirror `pairs` support arbitrary paths; only the singular `strategy_domain` label needs extending) and move the pipeline half of the invariant suite into it.
+This is tracked naming debt, deliberately deferred — not an accident. The volume of application-layer strategy (currently one note, [PE_Invariant_Suite.md](../../../Notes/projects/covenant/platform-engineering/PE_Invariant_Suite.md), which already separates pipeline vs platform invariants internally) does not yet justify a second domain. **Revisit when M2 work begins:** add a second mirror group for an application domain in `registry.yaml` (mirror `pairs` support arbitrary paths; only the singular `strategy_domain` label needs extending) and move the pipeline half of the invariant suite into it.
+
+**Amendment (2026-07-08):** The application-domain split executed ahead of the original "revisit when M2 begins" trigger. The M0 problem specification ([Covenant_Problem_and_Motivation.md](../Covenant_Problem_and_Motivation.md)) and split invariant notes ([application/](../application/README.md)) supplied the application-strategy volume the deferral was waiting on. See [application/README.md](../application/README.md) for M0 strategy; pipeline invariants live in [application/Pipeline_Invariants.md](../application/Pipeline_Invariants.md); platform invariants live in [PE_Infrastructure_Invariants.md](PE_Infrastructure_Invariants.md).
 
 ## Strategy docs (canonical in Notes)
 
@@ -31,8 +33,12 @@ This is tracked naming debt, deliberately deferred — not an accident. The volu
 | Phase 2: Cloud topology blueprint | [blueprints/PE_RM_Phase2.md](blueprints/PE_RM_Phase2.md) | [PE_RM_Phase2.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md) |
 | Phase 3: Terraform blueprint | [blueprints/PE_RM_Phase3.md](blueprints/PE_RM_Phase3.md) | [PE_RM_Phase3.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md) |
 | Phase 4: CI/CD blueprint | [blueprints/PE_RM_Phase4.md](blueprints/PE_RM_Phase4.md) | [PE_RM_Phase4.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_RM_Phase4.md) |
-| Invariant suite (pipeline + Docker) | [PE_Invariant_Suite.md](PE_Invariant_Suite.md) | [PE_Invariant_Suite.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/PE_Invariant_Suite.md) |
+| Platform infrastructure invariants | [PE_Infrastructure_Invariants.md](PE_Infrastructure_Invariants.md) | [PE_Infrastructure_Invariants.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md) |
 | Property test specs (Hypothesis) | [blueprints/PE_Property_Test_Specs.md](blueprints/PE_Property_Test_Specs.md) | [PE_Property_Test_Specs.md](https://github.com/endisciple13/notes/blob/main/projects/covenant/platform-engineering/blueprints/PE_Property_Test_Specs.md) |
+
+## Application strategy (`M0`)
+
+Canonical M0 docs live in [../application/README.md](../application/README.md) and [../Covenant_Problem_and_Motivation.md](../Covenant_Problem_and_Motivation.md). Mirrors land in `covenant_pipeline/docs/` and `covenant_pipeline/docs/application/`.
 
 ## Math (canonical in Notes, mirrored to covenant_pipeline)
 

@@ -5,7 +5,8 @@ id: projects-covenant-platform-engineering-blueprints-PE_Property_Test_Specs
 type: blueprint
 status: draft
 dependencies:
-  - projects/covenant/platform-engineering/PE_Invariant_Suite.md
+  - projects/covenant/application/Pipeline_Invariants.md
+  - projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
   - math/platform-engineering/Math_Application_Pipeline.md
 tags:
   - invariants
@@ -15,35 +16,35 @@ tags:
 invariants: []
 inherited_invariants:
   - id: provenance-grounding
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_provenance_grounding.py::test_provenance_grounding_detects_fabricated_span"
   - id: chunker-partition
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_chunker_partition.py::test_partition_monotone_nonoverlap"
   - id: chunker-coverage-audit
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_chunker_coverage_audit.py::test_chunker_coverage_audit_non_empty_extraction"
   - id: router-rule-dispatch
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_router_rule_dispatch.py::test_single_dispatch_or_abstain"
   - id: glossary-acyclic
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_glossary_acyclic.py::test_definition_graph_dag"
   - id: metamorphic-stability
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_metamorphic_stability.py::test_reflow_prefix_invariant"
   - id: container-parity
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_container_parity.py::test_container_parity_host_reproducible"
   - id: config-totality
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_config_totality.py::test_missing_env_fails_fast"
   - id: phase-composition
@@ -61,7 +62,7 @@ inherited_invariants:
 >
 > **Note on Schema Sequencing:** The `inherited_invariants:` frontmatter block presumes the chain-auditor plan's FM-015..FM-018 rules have landed in `scripts/validate_frontmatter.py`. Per plan instruction §IV.6, all rows are shipped as `status: planned` during initial Fable authorship and must not be stripped.
 >
-> **Theory & Mathematical Foundations:** Autoformalization of Layer 1 invariants from [PE_Invariant_Suite.md](../PE_Invariant_Suite.md) and categorical pipeline foundations from [Math_Application_Pipeline.md](../math/Math_Application_Pipeline.md) into universally quantified Hypothesis property tests. Governed by [Invariant_Authorship.md](../../../../Notes/meta/Invariant_Authorship.md) §VI.4 (progression to Hypothesis properties per module) and §VII.1 (test-writer non-circularity).
+> **Theory & Mathematical Foundations:** Autoformalization of Layer 1 invariants from [Pipeline_Invariants.md](../../application/Pipeline_Invariants.md) and [PE_Infrastructure_Invariants.md](../PE_Infrastructure_Invariants.md) and categorical pipeline foundations from [Math_Application_Pipeline.md](../math/Math_Application_Pipeline.md) into universally quantified Hypothesis property tests. Governed by [Invariant_Authorship.md](../../../../Notes/meta/Invariant_Authorship.md) §VI.4 (progression to Hypothesis properties per module) and §VII.1 (test-writer non-circularity).
 
 ## I. Fable Autoformalization Strategy & Scope
 
@@ -71,14 +72,14 @@ This blueprint establishes the Layer 2 implementation contract for upgrading the
 
 ### 1. Authorship Independence & Non-Circularity
 To preserve the verification integrity required by `Invariant_Authorship.md` §VII.1, all specifications in this document are derived strictly from:
-1. The formal invariant statements and Layer 0 audit notes in `PE_Invariant_Suite.md`.
+1. The formal invariant statements and Layer 0 audit notes in `Pipeline_Invariants.md` and `PE_Infrastructure_Invariants.md`.
 2. The category-theoretic phase decompositions, Kleisli arrows, and fiber-product semantics in `Math_Application_Pipeline.md`.
 3. Containerization functor laws in `Math_Containerization.md`.
 
 **Hard Constraint:** No phase implementation internals (`phases/*.py`, `orchestrator.py`) were inspected during authorship. Test developers implementing this blueprint must code against the interface contracts and property definitions defined below without referencing internal algorithmic shortcuts.
 
 ### 2. Binding Layer 0 Resolutions
-Per the K1 audit resolutions recorded in `PE_Invariant_Suite.md`, two domain boundaries are immutable and must not be strengthened by test implementations:
+Per the K1 audit resolutions recorded in `Pipeline_Invariants.md`, two domain boundaries are immutable and must not be strengthened by test implementations:
 * **TOC-Driven Partial Coverage (`chunker-partition`, `chunker-coverage-audit`):** Partial coverage of Credit Agreement PDFs is confirmed design intent. The chunker is not required to tile 100% of the document pages. `chunker-partition` applies strictly within the declared covered domain. To defend against silent section omission (where the extraction engine exports empty sections without warning), `chunker-coverage-audit` enforces non-empty text extraction per skeleton section and performs an independent body scan for section headers. Discrepancies between the body scan and TOC skeleton must be recorded in `Document_Metadata.Warnings` (detect-and-report); they must **never** trigger a hard test failure.
 * **Glossary Reference Closure (`glossary-acyclic`):** While definition graph acyclicity is a strict topological requirement (hard fail on cycles), reference closure remains **detect-and-report** (soft fail). Hard-failing on dangling references would break on legitimate legal cross-references to excluded appendices (e.g., "as defined in Exhibit B"). The property test must verify that the audit endomorphism $f_{\text{audit}}$ detects all dangling pointers, reports them, and correctly classifies them as excluded-domain (expected) versus in-domain (genuine defect) in metadata warnings.
 
@@ -183,7 +184,7 @@ This section defines the P1–P7 contract for the five missing Covenant invarian
 
 > **Rule of Thumb:** Upgrade existing Stage 0 unit tests and mathematical pipeline theorems to universally quantified Hypothesis properties across randomized document structures and environments.
 
-This section defines the property-test upgrade specifications for the four remaining invariants inherited from `PE_Invariant_Suite.md` and `Math_Application_Pipeline.md`.
+This section defines the property-test upgrade specifications for the four remaining invariants inherited from `Pipeline_Invariants.md` and `Math_Application_Pipeline.md`.
 
 ### 7. Provenance Grounding (`provenance-grounding`)
 

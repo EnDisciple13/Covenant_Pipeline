@@ -6,7 +6,8 @@ type: blueprint
 status: draft
 dependencies:
   - math/platform-engineering/Math_Containerization.md
-  - projects/covenant/platform-engineering/PE_Invariant_Suite.md
+  - projects/covenant/application/Pipeline_Invariants.md
+  - projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
 tags: []
 invariants:
   - id: image-determinism
@@ -23,35 +24,35 @@ inherited_invariants:
     status: waived
     note: "Phase 1 validates container packaging and compose topology; categorical eval-morphism transfer is deferred to property-test specs."
   - id: provenance-grounding
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_provenance_grounding.py::test_provenance_grounding_detects_fabricated_span"
   - id: chunker-partition
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: planned
     enforced_by: "tests/invariants/test_chunker_partition.py::test_partition_monotone_nonoverlap"
   - id: chunker-coverage-audit
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_chunker_coverage_audit.py::test_chunker_coverage_audit_non_empty_extraction"
   - id: router-rule-dispatch
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: planned
     enforced_by: "tests/invariants/test_router_rule_dispatch.py::test_single_dispatch_or_abstain"
   - id: glossary-acyclic
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: planned
     enforced_by: "tests/invariants/test_glossary_acyclic.py::test_definition_graph_dag"
   - id: metamorphic-stability
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/application/Pipeline_Invariants.md
     status: planned
     enforced_by: "tests/invariants/test_metamorphic_stability.py::test_reflow_prefix_invariant"
   - id: container-parity
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
     status: enforced
     enforced_by: "tests/invariants/test_container_parity.py::test_container_parity_host_reproducible"
   - id: config-totality
-    from: projects/covenant/platform-engineering/PE_Invariant_Suite.md
+    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
     status: planned
     enforced_by: "tests/invariants/test_config_totality.py::test_missing_env_fails_fast"
 ---
@@ -150,4 +151,4 @@ Plaintext
 
 ## Design Audit Notes (2026-07-04)
 
-- **`image-determinism` invariant restated.** The original claim — same Dockerfile + lockfile produce *identical image digests on rebuild* — is empirically false: Docker builds are not bit-reproducible by default (mutable base tags like `python:3.11-slim`, unpinned pip resolution, embedded timestamps). Corrected to the enforceable form already anticipated by [PE_Invariant_Suite.md](../PE_Invariant_Suite.md) candidate #10: pin the base image by digest, lock dependencies, and treat the *built* digest (not a rebuild) as the immutable deployment artifact.
+- **`image-determinism` invariant restated.** The original claim — same Dockerfile + lockfile produce *identical image digests on rebuild* — is empirically false: Docker builds are not bit-reproducible by default (mutable base tags like `python:3.11-slim`, unpinned pip resolution, embedded timestamps). Corrected to the enforceable form already anticipated by [PE_Infrastructure_Invariants.md](../PE_Infrastructure_Invariants.md) candidate #10: pin the base image by digest, lock dependencies, and treat the *built* digest (not a rebuild) as the immutable deployment artifact.
