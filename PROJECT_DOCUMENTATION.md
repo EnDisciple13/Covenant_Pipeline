@@ -763,6 +763,8 @@ covenant-pipeline run --pdf agreement.pdf --serve-ui
 
 ## **Review ledger**
 
+> **Open catch-up:** Manual UI smoke not yet run (Approve + Correct via the viewer, then grade against the ledger). Checklist: [Notes/inbox/_processed/2026-07-07-manual-ui-smoke-todo.md](../Notes/inbox/_processed/2026-07-07-manual-ui-smoke-todo.md). After it passes, delete this callout.
+
 **Modules:** `viewer/backend/main.py`, `viewer/frontend/src/App.jsx`, `scripts/grade_against_ledger.py`, `tests/test_review_ledger.py`, `tests/test_grade_against_ledger.py`
 
 * **What it does:** Records human analyst verdicts (`approved` or `corrected`) as append-only JSONL — the empirical coupling for Layer 4 external validation. The viewer writes rows; a grading script compares later pipeline output against recorded truth.
