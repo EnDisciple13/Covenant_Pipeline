@@ -15,13 +15,13 @@ auto-synced into `covenant_pipeline/docs/platform-engineering/` by
 `scripts/sync_project_docs.py`. Edit files here in the Notes repo, then run
 `python scripts/sync_project_docs.py --write` (Windows: `py scripts/sync_project_docs.py --write`).
 
-## Domain scope (decision record, 2026-07-03)
+## Domain scope (decision record)
 
-`platform-engineering` is the **umbrella strategy domain** for the entire Covenant project — application-layer strategy (the CA pipeline itself) and platform-layer strategy both mirror here. In milestone terms: the application layer is effectively **M0**, the current containerization/deployment work is **M1**, and true platform engineering (the IDP generalization) is **M2**.
+`platform-engineering` is the **M1/M2 strategy domain** for Covenant containerization, cloud topology, Terraform, and CI/CD. Application-layer (M0) strategy lives in [`../application/`](../application/README.md) and [`../Covenant_Problem_and_Motivation.md`](../Covenant_Problem_and_Motivation.md).
 
-This is tracked naming debt, deliberately deferred — not an accident. The volume of application-layer strategy (currently one note, [PE_Invariant_Suite.md](../../../Notes/projects/covenant/platform-engineering/PE_Invariant_Suite.md), which already separates pipeline vs platform invariants internally) does not yet justify a second domain. **Revisit when M2 work begins:** add a second mirror group for an application domain in `registry.yaml` (mirror `pairs` support arbitrary paths; only the singular `strategy_domain` label needs extending) and move the pipeline half of the invariant suite into it.
+**History:** Through 2026-07-07 this folder was an umbrella for both application and platform strategy (tracked naming debt). On 2026-07-08 the application-domain split executed: pipeline invariants → [application/Pipeline_Invariants.md](../application/Pipeline_Invariants.md); platform invariants → [PE_Infrastructure_Invariants.md](PE_Infrastructure_Invariants.md). The legacy `PE_Invariant_Suite.md` file was removed from the registry and is not authoritative.
 
-**Amendment (2026-07-08):** The application-domain split executed ahead of the original "revisit when M2 begins" trigger. The M0 problem specification ([Covenant_Problem_and_Motivation.md](../Covenant_Problem_and_Motivation.md)) and split invariant notes ([application/](../application/README.md)) supplied the application-strategy volume the deferral was waiting on. See [application/README.md](../application/README.md) for M0 strategy; pipeline invariants live in [application/Pipeline_Invariants.md](../application/Pipeline_Invariants.md); platform invariants live in [PE_Infrastructure_Invariants.md](PE_Infrastructure_Invariants.md).
+Milestone framing: **M0** = extraction application; **M1** = Phases 1–4 below; **M2** = IDP generalization ([PE_Roadmap_M2.md](PE_Roadmap_M2.md)), blocked until M1 completes.
 
 ## Strategy docs (canonical in Notes)
 

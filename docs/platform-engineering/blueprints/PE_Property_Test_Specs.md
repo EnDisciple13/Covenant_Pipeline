@@ -60,7 +60,7 @@ inherited_invariants:
 
 > **Rule of Thumb:** Always derive property-test specifications strictly from formal mathematical invariants and domain boundaries without inspecting implementation internals.
 >
-> **Note on Schema Sequencing:** The `inherited_invariants:` frontmatter block presumes the chain-auditor plan's FM-015..FM-018 rules have landed in `scripts/validate_frontmatter.py`. Per plan instruction §IV.6, all rows are shipped as `status: planned` during initial Fable authorship and must not be stripped.
+> **Enforcement status (2026-07-06):** All `inherited_invariants:` rows in this note are `status: enforced` with named tests under `covenant_pipeline/tests/invariants/`. FM-015..FM-018 chain rules are live in `scripts/validate_frontmatter.py`. Do not flip rows back to `planned`.
 >
 > **Theory & Mathematical Foundations:** Autoformalization of Layer 1 invariants from [Pipeline_Invariants.md](../../application/Pipeline_Invariants.md) and [PE_Infrastructure_Invariants.md](../PE_Infrastructure_Invariants.md) and categorical pipeline foundations from [Math_Application_Pipeline.md](../math/Math_Application_Pipeline.md) into universally quantified Hypothesis property tests. Governed by [Invariant_Authorship.md](../../../../Notes/meta/rigor/Invariant_Authorship.md) §VI.4 (progression to Hypothesis properties per module) and §VII.1 (test-writer non-circularity).
 
@@ -258,4 +258,4 @@ Once all 10 property tests are implemented:
 1. Execute the mutation testing harness across `covenant_pipeline/`.
 2. Compare the resulting kill matrix against the baseline recorded in `tests/mutation/reports/2026-07-05-baseline.md`.
 3. **Mandatory Exit Condition:** Surviving mutants **M2**, **M5**, **M6**, and **M7** must be killed. Any mutant in these classes that survives represents an incomplete strategy domain or weak oracle and must be remediated in the test specification.
-4. Upon confirmation of mutant death, update `PE_Property_Test_Specs.md` frontmatter to flip all `inherited_invariants:` rows from `status: planned` to `status: enforced`, and sync enforcement status blocks across project documentation.
+4. Upon confirmation of mutant death, rows are already `enforced`; only add new rows as `planned` when new invariants are authored, and sync enforcement status blocks across project documentation.
