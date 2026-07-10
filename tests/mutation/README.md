@@ -2,7 +2,7 @@
 
 Runtime counterpart of the Notes trap-fixture harnesses: inject a deliberate, subtle Type B bug; the invariant suite must go red. Every **surviving mutant names a missing invariant** — a work item by construction, and a priority input to `/invariant-propose`.
 
-Theory: Notes `meta/Invariant_Authorship.md` §VI.2 (drills, kill rate) and §VIII (mechanical anchor role). Plan: Notes `inbox/2026-07-04-invariant-loop-plan.md` §II.2. Philosophy + fixture/drill symmetry: Notes `tests/README.md`.
+Theory: Notes `meta/rigor/Invariant_Authorship.md` §VI.2 (drills, kill rate) and §VIII (mechanical anchor role). Plan: Notes `inbox/2026-07-04-invariant-loop-plan.md` §II.2. Philosophy + fixture/drill symmetry: Notes `tests/README.md`.
 
 **Precondition (Stage 0):** priority invariant tests implemented in `tests/invariants/` (2026-07-05): `chunker-coverage-audit`, `provenance-grounding`, `container-parity` (host reproducibility; docker parity skips if unavailable).
 

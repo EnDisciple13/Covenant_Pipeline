@@ -9,20 +9,9 @@ dependencies:
 tags: []
 invariants:
   - id: host-isolation
-    statement: "Under changes to the host's userland: container observable behavior is unchanged - runtime dependency context Gamma_container is disjoint from host runtime-deps Gamma_host; data I/O bind mounts are explicit dev exceptions"
+    statement: "Container context Gamma_container is disjoint from host context Gamma_host"
   - id: eval-morphism
-    statement: "RESTATED 2026-07-05 (original categorical form fell to wall 3 of the transfer test; audit adjudication 2026-07-05): under application-image changes preserving the OCI runtime contract (image + run interface): the platform layer is unchanged - a changed application image redeploys with zero platform-layer change. Backend/Frontend pair is the covenant_pipeline instantiation"
-mappings:
-  - id: container-exponential-object
-    statement: "Docker image <-> exponential object Y^D in a CCC; docker build <-> internalization; docker run <-> eval morphism"
-    tier: heuristic
-    transfer: ""
-    breaks: "Three walls (Analogy_Rigor_Boundary section IV, 2026-07-04): (1) the ambient category is undefinable - images do not compose as functions, layering is a different operation; (2) the exponential's universal property quantifies over all objects and is unstateable without wall 1; (3) the eval signature is wrong - D is baked inside the image, so docker run does not supply D; the runtime supplies host resources (kernel, CPU, network), and a long-running server is a stateful process, not a morphism terminating in a value. Real rigor for containers is operational semantics + systems verification (seL4 genre), whose theorems come out as invariants - see this note's frontmatter"
-  - id: eval-generality-interface
-    statement: "Platform depends only on the eval signature, never on the internal structure of P (section 4, Principle of Generality)"
-    tier: tight
-    transfer: "Skeleton claim: container runtimes operate against the OCI image spec - an interface; the application can be rewritten freely behind a stable contract without touching infrastructure. Checkable: swap extraction internals, redeploy with zero platform changes"
-    breaks: "The decoupling holds at the interface level but the categorical clothing inherits walls 1-3 of container-exponential-object; state the claim operationally (OCI contract) rather than categorically when precision matters"
+    statement: "Docker Compose eval morphism connects Backend and Frontend exponential objects without type mismatch"
 ---
 # Architectural Formalization: The Category-Theoretic Foundations of Containerization
 

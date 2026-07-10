@@ -6,8 +6,8 @@ type: project_strategy
 status: draft
 dependencies:
   - math/platform-engineering/Math_Application_Pipeline.md
-  - meta/Layer4_TypeB_Auditing.md
-  - meta/Invariant_Authorship.md
+  - meta/rigor/Invariant_Authorship.md
+  - meta/verification/Layer4_TypeB_Auditing.md
 tags:
   - invariants
   - layer4
@@ -27,7 +27,7 @@ invariants:
 ---
 # Pipeline Invariants (Covenant Extraction)
 
-> Applied inventory of Layer 4 invariants for the Covenant pipeline's **already-implemented** extraction phases. Theory and taxonomy: [Invariant_Authorship.md](../../../Notes/meta/Invariant_Authorship.md). Audit mechanisms: [Layer4_TypeB_Auditing.md](../../../Notes/meta/Layer4_TypeB_Auditing.md). Pipeline phase structure: [Math_Application_Pipeline.md](../platform-engineering/math/Math_Application_Pipeline.md).
+> Applied inventory of Layer 4 invariants for the Covenant pipeline's **already-implemented** extraction phases. Theory and taxonomy: [Invariant_Authorship.md](../../../Notes/meta/rigor/Invariant_Authorship.md). Audit mechanisms: [Layer4_TypeB_Auditing.md](../../../Notes/meta/verification/Layer4_TypeB_Auditing.md). Pipeline phase structure: [Math_Application_Pipeline.md](../platform-engineering/math/Math_Application_Pipeline.md).
 
 ## Enforcement status (as of 2026-07-06)
 
@@ -61,7 +61,7 @@ invariants:
 
 ## Related Notes
 
-- [Invariant_Authorship.md](../../../Notes/meta/Invariant_Authorship.md) — theory, taxonomy, authorship split.
+- [Invariant_Authorship.md](../../../Notes/meta/rigor/Invariant_Authorship.md) — theory, taxonomy, authorship split.
 - [Covenant_Problem_and_Motivation.md](../Covenant_Problem_and_Motivation.md) — M0 domain problem and neuro-symbolic architecture.
 - [PE_Roadmap_M1.md](../platform-engineering/PE_Roadmap_M1.md) — platform-engineering phases; later phases inherit these invariants.
 - [Math_Application_Pipeline.md](../platform-engineering/math/Math_Application_Pipeline.md) — phase morphisms these invariants defend.

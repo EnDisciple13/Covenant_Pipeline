@@ -6,8 +6,8 @@ type: project_strategy
 status: draft
 dependencies:
   - math/platform-engineering/Math_Containerization.md
-  - meta/Layer4_TypeB_Auditing.md
-  - meta/Invariant_Authorship.md
+  - meta/rigor/Invariant_Authorship.md
+  - meta/verification/Layer4_TypeB_Auditing.md
 tags:
   - invariants
   - layer4
@@ -19,7 +19,7 @@ invariants:
 ---
 # Platform Infrastructure Invariants (Docker Layer)
 
-> Applied inventory of Layer 4 invariants for the Covenant pipeline's Docker platform layer. Theory and taxonomy: [Invariant_Authorship.md](../../../Notes/meta/Invariant_Authorship.md). Audit mechanisms: [Layer4_TypeB_Auditing.md](../../../Notes/meta/Layer4_TypeB_Auditing.md). Container formalism: [Math_Containerization.md](math/Math_Containerization.md).
+> Applied inventory of Layer 4 invariants for the Covenant pipeline's Docker platform layer. Theory and taxonomy: [Invariant_Authorship.md](../../../Notes/meta/rigor/Invariant_Authorship.md). Audit mechanisms: [Layer4_TypeB_Auditing.md](../../../Notes/meta/verification/Layer4_TypeB_Auditing.md). Container formalism: [Math_Containerization.md](math/Math_Containerization.md).
 
 ## Enforcement status (as of 2026-07-06)
 
@@ -43,7 +43,7 @@ Candidates 9–11 graduate to frontmatter `invariants:` entries when the platfor
 
 ## Related Notes
 
-- [Invariant_Authorship.md](../../../Notes/meta/Invariant_Authorship.md) — theory, taxonomy, authorship split.
+- [Invariant_Authorship.md](../../../Notes/meta/rigor/Invariant_Authorship.md) — theory, taxonomy, authorship split.
 - [PE_Roadmap_M1.md](PE_Roadmap_M1.md) — platform-engineering phases; later phases inherit these invariants.
 - [Math_Containerization.md](math/Math_Containerization.md) — container formalism behind the parity invariant.
 - [Pipeline_Invariants.md](../application/Pipeline_Invariants.md) — extraction pipeline invariants.

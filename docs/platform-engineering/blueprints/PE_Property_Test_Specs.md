@@ -5,56 +5,15 @@ id: projects-covenant-platform-engineering-blueprints-PE_Property_Test_Specs
 type: blueprint
 status: draft
 dependencies:
+  - math/platform-engineering/Math_Application_Pipeline.md
   - projects/covenant/application/Pipeline_Invariants.md
   - projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
-  - math/platform-engineering/Math_Application_Pipeline.md
 tags:
   - invariants
   - layer4
   - hypothesis
   - property-testing
 invariants: []
-inherited_invariants:
-  - id: provenance-grounding
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_provenance_grounding.py::test_provenance_grounding_detects_fabricated_span"
-  - id: chunker-partition
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_chunker_partition.py::test_partition_monotone_nonoverlap"
-  - id: chunker-coverage-audit
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_chunker_coverage_audit.py::test_chunker_coverage_audit_non_empty_extraction"
-  - id: router-rule-dispatch
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_router_rule_dispatch.py::test_single_dispatch_or_abstain"
-  - id: glossary-acyclic
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_glossary_acyclic.py::test_definition_graph_dag"
-  - id: metamorphic-stability
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_metamorphic_stability.py::test_reflow_prefix_invariant"
-  - id: container-parity
-    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_container_parity.py::test_container_parity_host_reproducible"
-  - id: config-totality
-    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
-    status: enforced
-    enforced_by: "tests/invariants/test_config_totality.py::test_missing_env_fails_fast"
-  - id: phase-composition
-    from: math/platform-engineering/Math_Application_Pipeline.md
-    status: enforced
-    enforced_by: "tests/invariants/test_phase_composition.py::test_phase_composition_associativity"
-  - id: staging-parity
-    from: math/platform-engineering/Math_Application_Pipeline.md
-    status: enforced
-    enforced_by: "tests/invariants/test_staging_parity.py::test_staging_parity_deterministic_prefix"
 ---
 # PE Property Test Specs (Covenant Pipeline & Platform Layer)
 
@@ -62,7 +21,7 @@ inherited_invariants:
 >
 > **Note on Schema Sequencing:** The `inherited_invariants:` frontmatter block presumes the chain-auditor plan's FM-015..FM-018 rules have landed in `scripts/validate_frontmatter.py`. Per plan instruction §IV.6, all rows are shipped as `status: planned` during initial Fable authorship and must not be stripped.
 >
-> **Theory & Mathematical Foundations:** Autoformalization of Layer 1 invariants from [Pipeline_Invariants.md](../../application/Pipeline_Invariants.md) and [PE_Infrastructure_Invariants.md](../PE_Infrastructure_Invariants.md) and categorical pipeline foundations from [Math_Application_Pipeline.md](../math/Math_Application_Pipeline.md) into universally quantified Hypothesis property tests. Governed by [Invariant_Authorship.md](../../../../Notes/meta/Invariant_Authorship.md) §VI.4 (progression to Hypothesis properties per module) and §VII.1 (test-writer non-circularity).
+> **Theory & Mathematical Foundations:** Autoformalization of Layer 1 invariants from [Pipeline_Invariants.md](../../application/Pipeline_Invariants.md) and [PE_Infrastructure_Invariants.md](../PE_Infrastructure_Invariants.md) and categorical pipeline foundations from [Math_Application_Pipeline.md](../math/Math_Application_Pipeline.md) into universally quantified Hypothesis property tests. Governed by [Invariant_Authorship.md](../../../../Notes/meta/rigor/Invariant_Authorship.md) §VI.4 (progression to Hypothesis properties per module) and §VII.1 (test-writer non-circularity).
 
 ## I. Fable Autoformalization Strategy & Scope
 

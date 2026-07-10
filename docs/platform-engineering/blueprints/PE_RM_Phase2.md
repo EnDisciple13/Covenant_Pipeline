@@ -7,61 +7,10 @@ status: draft
 dependencies:
   - math/platform-engineering/Math_Containerization.md
   - projects/covenant/platform-engineering/blueprints/PE_RM_Phase1.md
-  - projects/covenant/application/Pipeline_Invariants.md
-  - projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
 tags: []
 invariants:
   - id: topology-completeness
     statement: "Every runtime dependency in the topology diagram maps to a named AWS resource"
-inherited_invariants:
-  - id: host-isolation
-    from: math/platform-engineering/Math_Containerization.md
-    status: planned
-    enforced_by: "tests/platform/test_host_isolation.py::test_runtime_deps_disjoint_from_host"
-  - id: eval-morphism
-    from: math/platform-engineering/Math_Containerization.md
-    status: waived
-    note: "Phase 2 defines cloud topology; eval-morphism transfer tests belong to the containerization implementation phase."
-  - id: image-determinism
-    from: projects/covenant/platform-engineering/blueprints/PE_RM_Phase1.md
-    status: planned
-    enforced_by: "tests/platform/test_image_determinism.py::test_base_image_digest_pinned"
-  - id: host-isolation
-    from: projects/covenant/platform-engineering/blueprints/PE_RM_Phase1.md
-    status: planned
-    enforced_by: "tests/platform/test_host_isolation.py::test_compose_services_need_no_host_runtime"
-  - id: provenance-grounding
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: waived
-    note: "Extraction pipeline invariants are out of scope for the AWS topology blueprint."
-  - id: chunker-partition
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: waived
-    note: "Extraction pipeline invariants are out of scope for the AWS topology blueprint."
-  - id: chunker-coverage-audit
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: waived
-    note: "Extraction pipeline invariants are out of scope for the AWS topology blueprint."
-  - id: router-rule-dispatch
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: waived
-    note: "Extraction pipeline invariants are out of scope for the AWS topology blueprint."
-  - id: glossary-acyclic
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: waived
-    note: "Extraction pipeline invariants are out of scope for the AWS topology blueprint."
-  - id: metamorphic-stability
-    from: projects/covenant/application/Pipeline_Invariants.md
-    status: waived
-    note: "Extraction pipeline invariants are out of scope for the AWS topology blueprint."
-  - id: container-parity
-    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
-    status: planned
-    enforced_by: "tests/invariants/test_container_parity.py::test_container_parity_host_vs_docker"
-  - id: config-totality
-    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
-    status: planned
-    enforced_by: "tests/invariants/test_config_totality.py::test_missing_env_fails_fast"
 ---
 # Technical Blueprint: Phase 2 - Target Cloud Topology (AWS)
 
