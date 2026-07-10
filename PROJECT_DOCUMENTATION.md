@@ -91,8 +91,8 @@ Notes-only (reusable theory, resolve in the multi-root workspace):
 
 - [notes/meta/Meta_Workflow.md](../notes/meta/Meta_Workflow.md) — canonical 0-4 Centaur meta-workflow.
 - [notes/meta/verification/Layer4_TypeB_Auditing.md](../notes/meta/verification/Layer4_TypeB_Auditing.md) — Type B auditing and invariants (relevant to the integrity auditor and Pydantic gates).
-- [notes/math/Math_Containerization.md](../notes/math/Math_Containerization.md) — categorical foundations of containerization.
-- [notes/math/Math_Notes_Platform_Engineer.md](../notes/math/Math_Notes_Platform_Engineer.md) — platform engineering math (IaC, CI/CD, orchestration).
+- [notes/math/Math_Containerization.md](../notes/math/platform-engineering/Math_Containerization.md) — categorical foundations of containerization.
+- [notes/math/Math_Notes_Platform_Engineer.md](../notes/math/platform-engineering/Math_Notes_Platform_Engineer.md) — platform engineering math (IaC, CI/CD, orchestration).
 - [notes/projects/covenant/README.md](../notes/projects/covenant/README.md) — project note index.
 
 Implementation (this repo):
