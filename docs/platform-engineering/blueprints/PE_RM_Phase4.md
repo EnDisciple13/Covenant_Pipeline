@@ -5,12 +5,55 @@ id: projects-covenant-platform-engineering-blueprints-PE_RM_Phase4
 type: blueprint
 status: draft
 dependencies:
+  - projects/covenant/application/Pipeline_Invariants.md
+  - projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
   - projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md
   - projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md
 tags: []
 invariants:
   - id: promotion-order
-    statement: "CI/CD promotes images through dev then staging then prod; prod deploy requires staging gate"
+    statement: "CI/CD auto-deploys dev on merge; staging and prod require manual workflow_dispatch or environment approval"
+inherited_invariants:
+  - id: topology-completeness
+    from: projects/covenant/platform-engineering/blueprints/PE_RM_Phase2.md
+    status: planned
+    enforced_by: "tests/terraform/test_topology_completeness.py::test_every_diagram_node_has_resource"
+  - id: iac-topology-parity
+    from: projects/covenant/platform-engineering/blueprints/PE_RM_Phase3.md
+    status: planned
+    enforced_by: "tests/terraform/test_iac_topology_parity.py::test_plan_matches_phase2_topology"
+  - id: provenance-grounding
+    from: projects/covenant/application/Pipeline_Invariants.md
+    status: waived
+    note: "Extraction pipeline invariants are out of scope for the CI/CD orchestration blueprint."
+  - id: chunker-partition
+    from: projects/covenant/application/Pipeline_Invariants.md
+    status: waived
+    note: "Extraction pipeline invariants are out of scope for the CI/CD orchestration blueprint."
+  - id: chunker-coverage-audit
+    from: projects/covenant/application/Pipeline_Invariants.md
+    status: waived
+    note: "Extraction pipeline invariants are out of scope for the CI/CD orchestration blueprint."
+  - id: router-rule-dispatch
+    from: projects/covenant/application/Pipeline_Invariants.md
+    status: waived
+    note: "Extraction pipeline invariants are out of scope for the CI/CD orchestration blueprint."
+  - id: glossary-acyclic
+    from: projects/covenant/application/Pipeline_Invariants.md
+    status: waived
+    note: "Extraction pipeline invariants are out of scope for the CI/CD orchestration blueprint."
+  - id: metamorphic-stability
+    from: projects/covenant/application/Pipeline_Invariants.md
+    status: waived
+    note: "Extraction pipeline invariants are out of scope for the CI/CD orchestration blueprint."
+  - id: container-parity
+    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
+    status: planned
+    enforced_by: "tests/invariants/test_container_parity.py::test_container_parity_host_vs_docker"
+  - id: config-totality
+    from: projects/covenant/platform-engineering/PE_Infrastructure_Invariants.md
+    status: planned
+    enforced_by: "tests/invariants/test_config_totality.py::test_missing_env_fails_fast"
 ---
 # Technical Blueprint: Phase 4 - CI/CD Orchestration (The Control Loop)
 

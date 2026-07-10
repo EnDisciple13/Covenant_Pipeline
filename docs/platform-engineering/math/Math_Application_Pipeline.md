@@ -10,7 +10,45 @@ dependencies:
 tags: []
 invariants:
   - id: phase-composition
-    statement: "Pipeline phase morphisms compose left-to-right; output type of phase N equals input type of phase N+1"
+    statement: "Under recomposition of the pipeline (adding, removing, or reordering phases): phase morphisms compose left-to-right and the output type of phase N equals the input type of phase N+1"
+  - id: staging-parity
+    statement: "PROPOSED 2026-07-05 (by-product of rigor grading; awaiting ratification + test implementation): under regrouping of the run (composed vs individual CLI stages): the deterministic prefix produces byte-identical artifacts - catches hidden inter-phase state that type compatibility misses"
+mappings:
+  - id: phase-composition-morphisms
+    statement: "Pipeline phases as typed morphisms over artifact category A, composed by orchestrator"
+    tier: tight
+    transfer: "Theorem: composition is associative and staged evaluation equals composed evaluation. Translation: running phases individually via CLI yields byte-identical artifacts to a single run over the deterministic prefix - see staging-parity invariant"
+    breaks: "Morphisms are effectful file transformations mediated by shared filesystem state (PipelinePaths), not pure functions; purity holds as discipline, not by construction; stochastic stages excluded (handled as Kleisli)"
+  - id: router-characteristic-functions
+    statement: "Routing as product of characteristic functions; surviving set S_r; fiber product over chunk indices, not a partition"
+    tier: exact
+    transfer: "Theorem: product of indicator functions is the indicator of the intersection. Translation: a chunk survives rule r iff it passes all four masks - literally the pandas boolean-mask conjunction in router.py. Verified by code inspection; fiber-product semantics independently confirmed by the 2026-07-03 Knowledge Tier 1 audit"
+    breaks: ""
+  - id: llm-stages-kleisli
+    statement: "LLM stages as Kleisli arrows of a monad T on the artifact category"
+    tier: tight
+    transfer: "Skeleton claim: stochastic/failing stages do not compose as pure morphisms and must carry their effect in the type - matching the code's skip-on-failure handling and the --skip-llm deterministic-prefix split"
+    breaks: "The monad is not pinned (error vs distribution - the note says 'e.g.'); no monad laws verified; temperature-0 'point mass' is an approximation (sampling and hardware nondeterminism remain - cf. metamorphic-stability's declared-stochasticity clause)"
+  - id: compile-fixed-point
+    statement: "Reference resolution as operator R; traverse-and-mutate as endofunctor; termination given DAG"
+    tier: tight
+    transfer: "Skeleton claim: if the reference graph is acyclic, resolution terminates - the conditional is real and the DAG condition is exactly what glossary-acyclic audits"
+    breaks: "'Endofunctor' is decorative for a tree-map (fmap); the five-hop fuzzy fallback makes resolution correctness empirical, not structural - fuzzy matching can mis-resolve while terminating cleanly"
+  - id: audit-predicates
+    statement: "Audit as endomorphism annotating three predicates: acyclicity, pointer closure, type safety"
+    tier: exact
+    transfer: "The predicates are literal code checks (DFS cycle detection, key-membership sweep, numeric type validation); the endomorphism claim (annotates, never mutates extracted values) is checkable by diffing payloads before/after audit"
+    breaks: ""
+  - id: path-namespace-functor
+    statement: "PipelinePaths as functor Phi: A -> Path"
+    tier: heuristic
+    transfer: ""
+    breaks: "Phi is defined on objects only; no morphism action is given or implementable - as stated it is an indexed family of locations, not a functor. Harmless but decorative"
+  - id: actor-critic-pullback
+    statement: "Validation as pullback diagram over source text and extraction"
+    tier: heuristic
+    transfer: ""
+    breaks: "Self-declared informal in the note; no universal property intended or checkable. The load-bearing content (grounding, decoupling, subordination) is stated operationally in Neuro_Symbolic_Extraction and does not need the pullback"
 ---
 # Architectural Formalization: The Category-Theoretic Foundations of the Covenant Pipeline
 
