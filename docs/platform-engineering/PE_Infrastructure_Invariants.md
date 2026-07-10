@@ -29,15 +29,17 @@ invariants:
 
 ## Platform invariants (Docker layer)
 
-Containerization is a structure-preserving map; the master invariant is faithfulness of that functor:
+> **Rule of Thumb:** Check the motivation column's tier before leaning on a row's math framing — `heuristic` means scaffold, and the operational driver is the real justification.
 
-| # | Invariant id | Class | Statement |
-|---|--------------|-------|-----------|
-| 7 | `container-parity` | Refinement | Golden-fixture run inside container == outside. One test catches env drift, dependency skew, and path bugs simultaneously |
-| 8 | `config-totality` | Functional law (totality) | Missing required env var ⇒ fail fast with named error; never start on a silent default |
-| 9 | — (candidate) | Contract inhabitation | Declared ports listening; healthcheck returns schema-valid response |
-| 10 | — (candidate) | Reproducibility | Base images pinned by digest; dependencies locked |
-| 11 | — (candidate) | Topological | Compose dependency graph acyclic; rerun on same mounted volume reproduces artifacts |
+Containerization is a structure-preserving map; the master invariant is faithfulness of that functor. The **Motivation** column locates each invariant's origin — a graded mapping (with tier), a taxonomy class, or an operational driver — without restating the math; full derivations live with the math notes.
+
+| # | Invariant id | Class | Statement | Motivation (source · tier) |
+|---|--------------|-------|-----------|----------------------------|
+| 7 | `container-parity` | Refinement | Golden-fixture run inside container == outside. One test catches env drift, dependency skew, and path bugs simultaneously | [`container-context-collapse`](math/Math_Notes_Platform_Engineer.md) (tight — its transfer claim names this test); the CCC exponential story ([`container-exponential-object`](math/Math_Containerization.md)) is heuristic scaffold only |
+| 8 | `config-totality` | Functional law (totality) | Missing required env var ⇒ fail fast with named error; never start on a silent default | Dependency-product framing in [Math_Containerization.md](math/Math_Containerization.md) (heuristic scaffold); operational driver: a silent default is a latent misconfiguration |
+| 9 | — (candidate) | Contract inhabitation | Declared ports listening; healthcheck returns schema-valid response | [`eval-generality-interface`](math/Math_Containerization.md) (tight — platform sees only the OCI interface) |
+| 10 | — (candidate) | Reproducibility | Base images pinned by digest; dependencies locked | `image-immutability` invariant ([Math_Notes_Platform_Engineer.md](math/Math_Notes_Platform_Engineer.md)): digests immutable, tags mutable pointers |
+| 11 | — (candidate) | Topological | Compose dependency graph acyclic; rerun on same mounted volume reproduces artifacts | Topological class ([Invariant_Authorship.md](../../../Notes/meta/rigor/Invariant_Authorship.md) §III); no dedicated mapping yet |
 
 Candidates 9–11 graduate to frontmatter `invariants:` entries when the platform-engineering roadmap phases that own them are implemented.
 

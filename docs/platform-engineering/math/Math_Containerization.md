@@ -120,3 +120,39 @@ Consequently, the infrastructure achieves complete logical decoupling:
 | **Adjunction LHS**                   | $\text{Hom}(X \times D, Y)$                                     | Running code natively. The host $X$ must pollution-contaminate its own space by downloading and installing $D$.      |
 | **Adjunction RHS**                   | $\text{Hom}(X, Y^D)$                                            | Running code via platform engineering. The host $X$ remains clean; it simply fetches the self-contained image $Y^D$. |
 | **Evaluation Morphism ($eval$)**     | $eval : Y^D \times D \to Y$                                     | The **Container Runtime Engine** (`containerd` / Docker Daemon / AWS Fargate) executing `docker run ca-pipeline`.    |
+
+## 6. Worked Derivations: From Model to Property Test (Docker Layer)
+
+> **Rule of Thumb:** Derive each invariant through the four-part walk and state plainly when the motivation is a breakage line or plain practice rather than the model, because honesty about the source is what keeps the formalism load-bearing.
+
+Template and motivation-source taxonomy: [Invariant_Authorship.md](../../../../Notes/meta/rigor/Invariant_Authorship.md) §IX. Tiers below are the adjudicated gradings from this note's `mappings:` and [Math_Notes_Platform_Engineer.md](Math_Notes_Platform_Engineer.md). Provenance: re-grounded 2026-07-10 from an external walkthrough whose binding claims failed verification (case: `cases/2026-07-10-gemini-derivation-authoring-liberties.md`).
+
+### 6.1 Statelessness under ephemeral runtime — CANDIDATE (unratified)
+
+1. **Operational risk:** Fargate kills, moves, and restarts containers constantly. An app that silently writes session state to the container filesystem (`/tmp/output.json`) and expects it on the next request works locally for hours and dies in the cloud on the first container replacement.
+2. **Motivation source + tier:** a `breaks:` line — this note's `container-exponential-object` mapping (tier `heuristic`) records that a long-running server is *"a stateful process, not a morphism terminating in a value."* The model treats $eval$ as stateless; reality doesn't. The invariant **enforces on reality the statelessness the model assumed** — motivated by where the analogy breaks, not where it holds.
+3. **Property test:** run the container with a read-only root filesystem (`docker run --read-only`), drive one full extraction request. Pass = stateless where it matters; a write-permission crash = a statefulness bug found before the cloud finds it.
+4. **Failure routing:** a stray temp-file write is **L3** (redirect to the declared volume). An *architecturally required* write is **L2/L1** — the design assumed persistent local disk, which the Fargate constraint forbids; fix the design (S3 sync), not the symptom.
+
+### 6.2 Cross-host determinism — RATIFIED (`container-parity` / `host-isolation`)
+
+1. **Operational risk:** "works on my machine" — output silently depends on host Python version, locale, timezone, or an ambient library.
+2. **Motivation source + tier:** a `transfer:` claim — [Math_Notes_Platform_Engineer.md](Math_Notes_Platform_Engineer.md) `container-context-collapse` (tier `tight`): *containerized execution depends only on declared dependencies, never on host userland — the host-isolation invariant, checkable by container-parity test.* The clean case: a tight mapping whose transfer claim names both invariant and test. Standing breakage (also recorded there): disjointness is false below userland (shared kernel, CPU architecture) — parity claims stop at the userland boundary.
+3. **Property test:** identical image on two hosts (or perturbed host env, e.g. different `TZ`), same golden fixture in, byte-identical output asserted. Implemented in `covenant_pipeline/tests/invariants/`.
+4. **Failure routing:** a diff means host leakage — usually **L3** (unpinned dependency, locale-sensitive formatting); leakage via a declared bind mount is **L2** (the interface declaration is wrong or incomplete).
+
+### 6.3 Non-root runtime — CANDIDATE (unratified; no math motivation, deliberately)
+
+1. **Operational risk:** a container process running as UID 0 that suffers a namespace escape hands the attacker root on the host; defense in depth demands an unprivileged runtime user.
+2. **Motivation source + tier:** **none — taxonomy/practice only** (domain & boundary class). The disjointness notation ($\Gamma_{\text{container}} \cap \Gamma_{\text{host}}$) does not model privilege escalation — the recorded `breaks:` line notes the shared kernel is exactly where disjointness fails. Stating this honestly does not weaken the invariant.
+3. **Property test:** `docker run <image> id -u` in CI; assert nonzero. One line, no Dockerfile reading.
+4. **Failure routing:** always **L3** (add/fix the `USER` directive) unless a base image forces root — then **L2** (image selection is a design decision).
+
+### 6.4 Interface surface exactness — extends inventory candidate 9
+
+1. **Operational risk:** the positive half (declared port listening, healthcheck valid) is inventory candidate 9. The negative half: a debug port (debugger, notebook server) left exposed in the image becomes an unauthenticated door in production.
+2. **Motivation source + tier:** a `transfer:` claim — this note's `eval-generality-interface` (tier `tight`): the platform depends only on the declared interface. The negative half is the contrapositive reading: anything *not* in the declared interface must not be observable. State it operationally (OCI contract) when precision matters, per that mapping's own breaks note.
+3. **Property test:** start the container; assert the declared port answers `GET /health → 200`; assert a scan of common debug ports finds nothing listening externally.
+4. **Failure routing:** an exposed extra port is **L3** (remove it); if the app *needs* it, that is **L2** — renegotiate the interface declaration, don't bypass it.
+
+Candidates 6.1, 6.3, and 6.4 enter [PE_Infrastructure_Invariants.md](../PE_Infrastructure_Invariants.md) only via `/invariant-propose` and human ratification.

@@ -37,14 +37,18 @@ invariants:
 
 ## Pipeline invariants (implemented phases)
 
-| # | Invariant id | Class | Statement | Target modules |
-|---|--------------|-------|-----------|----------------|
-| 1 | `provenance-grounding` | Provenance | Every extracted field cites a span that verifiably occurs in the cited chunk (substring/offset check) | `phases/extraction.py` + `schemas/` |
-| 2 | `chunker-partition` | Structural (partition) | No overlaps, nothing invented; bboxes within page bounds; monotone ordering; covered domain explicitly declared, with text conservation inside it | `phases/chunker.py` |
-| 3 | `chunker-coverage-audit` | Coverage / completeness | Every skeleton section yields **non-empty** `Raw_Text`; independent body scan for section headers reconciles with the TOC skeleton; exclusion manifest in `Document_Metadata` records what was deliberately skipped | `phases/chunker.py` |
-| 4 | `router-rule-dispatch` | Functional law | Per **rule** $r$: dispatch exactly one envelope iff $\|S_r\| = 1$, else deterministic abstention; evaluations independent; a chunk may serve multiple rules (fiber product, not a partition — per [Math_Application_Pipeline.md](../platform-engineering/math/Math_Application_Pipeline.md) §5) | `phases/router.py` |
-| 5 | `glossary-acyclic` | Topological | Definition graph is a DAG; bounded multi-hop depth; dangling references *detected, reported, and classified*: excluded-domain (expected) vs in-domain (defect) | `phases/glossary.py`, `phases/compiler.py` |
-| 6 | `metamorphic-stability` | Metamorphic / equivariance | Formatting perturbations leave the deterministic prefix $P_{\text{det}}$ (chunk, route, glossary) unchanged; LLM-stage version holds modulo temperature-0 stochasticity — tests phases without knowing the right answer | `orchestrator.py` (`--skip-llm` prefix first) |
+> **Rule of Thumb:** Check the motivation column's tier before leaning on a row's math framing — `heuristic` means scaffold, an L0 entry means the invariant is reality-motivated, and neither is a lesser pedigree than `exact`.
+
+The **Motivation** column locates each invariant's origin — a graded mapping (with tier), a taxonomy class, or an L0 decision — without restating the math; full derivations live with the math notes.
+
+| # | Invariant id | Class | Statement | Target modules | Motivation (source · tier) |
+|---|--------------|-------|-----------|----------------|----------------------------|
+| 1 | `provenance-grounding` | Provenance | Every extracted field cites a span that verifiably occurs in the cited chunk (substring/offset check) | `phases/extraction.py` + `schemas/` | [`actor-critic-pullback`](../platform-engineering/math/Math_Application_Pipeline.md) (heuristic — scaffold); operational driver: converts hallucination detection into a mechanical audit |
+| 2 | `chunker-partition` | Structural (partition) | No overlaps, nothing invented; bboxes within page bounds; monotone ordering; covered domain explicitly declared, with text conservation inside it | `phases/chunker.py` | Conservation class ([Invariant_Authorship.md](../../../Notes/meta/rigor/Invariant_Authorship.md) §III); no dedicated mapping — text conservation stated directly |
+| 3 | `chunker-coverage-audit` | Coverage / completeness | Every skeleton section yields **non-empty** `Raw_Text`; independent body scan for section headers reconciles with the TOC skeleton; exclusion manifest in `Document_Metadata` records what was deliberately skipped | `phases/chunker.py` | None, deliberately — L0 decision record (§Audit notes below): the silent-omission failure mode is empirical, not math-derived |
+| 4 | `router-rule-dispatch` | Functional law | Per **rule** $r$: dispatch exactly one envelope iff $\|S_r\| = 1$, else deterministic abstention; evaluations independent; a chunk may serve multiple rules (fiber product, not a partition — per [Math_Application_Pipeline.md](../platform-engineering/math/Math_Application_Pipeline.md) §5) | `phases/router.py` | [`router-characteristic-functions`](../platform-engineering/math/Math_Application_Pipeline.md) (exact — fiber-product semantics, §5) |
+| 5 | `glossary-acyclic` | Topological | Definition graph is a DAG; bounded multi-hop depth; dangling references *detected, reported, and classified*: excluded-domain (expected) vs in-domain (defect) | `phases/glossary.py`, `phases/compiler.py` | [`compile-fixed-point`](../platform-engineering/math/Math_Application_Pipeline.md) (tight — termination given DAG) + [`audit-predicates`](../platform-engineering/math/Math_Application_Pipeline.md) (exact — acyclicity predicate) |
+| 6 | `metamorphic-stability` | Metamorphic / equivariance | Formatting perturbations leave the deterministic prefix $P_{\text{det}}$ (chunk, route, glossary) unchanged; LLM-stage version holds modulo temperature-0 stochasticity — tests phases without knowing the right answer | `orchestrator.py` (`--skip-llm` prefix first) | [Math_Application_Pipeline.md](../platform-engineering/math/Math_Application_Pipeline.md) §§7–9 entailment — phrasing deliberately weakened to what they entail (§Audit notes below) |
 
 **Priority:** provenance grounding first. It converts "did the LLM hallucinate?" from vibes into a mechanical audit — the single most valuable invariant class for an LLM pipeline.
 
