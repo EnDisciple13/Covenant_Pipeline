@@ -11,7 +11,9 @@ invariants: []
 ---
 # Enterprise Platform Architecture: The Transition to Milestone 2
 
-**Prerequisite:** M1 Phases 1–4 complete — see [PE_Roadmap_M1.md](PE_Roadmap_M1.md).
+**Prerequisite:** M2 begins only when Andy can run the M1 operating loop unassisted and explain each observed effect — see [PE_Roadmap_M1.md](PE_Roadmap_M1.md).
+
+No Terraform state may be scheduled half-finished across the ~2026-08-03 job start; M2 work begins only after M1 stability under that prerequisite.
 
 ## Part I: The Operational Distinction (M1 vs. M2)
 
@@ -19,18 +21,19 @@ To architect a system top-down, you must cleanly separate the act of deploying a
 
 ### Milestone 1 (M1): Cloud Engineering (The Localized Proof)
 
-**The Objective:** Containerize a specific application (the Covenant Extraction Pipeline) and manually map it to a live cloud topology (AWS/Azure).
+**The Objective:** Containerize a specific application (the Covenant Extraction Pipeline) and manually map it to a live cloud topology on **AWS** (ECS Fargate + ECR + VPC). Other clouds may appear only as labeled contrast.
 
 - **The Execution:** You wrote a `Dockerfile` specifically for the CA backend. You wrote Terraform code specifically to provision an ECS Fargate cluster for the CA pipeline. You built a GitHub Actions workflow specifically to deploy this one repository.
     
-- **Why M1 was Mathematically Necessary:** You cannot abstract a system you have not physically built. Before you can write a generalized functor to map _any_ developer's code to the cloud, you must manually define the source and target categories. M1 was the physical grunt work of learning exactly which IAM roles, VPC subnets, and container ports are required to make the cloud function. You built a single, highly engineered car.
+- **Why M1 was operationally necessary:** You cannot abstract a system you have not physically built. Before you can write a generalized mapping that deploys _any_ developer's code to the cloud, you must manually define the source contracts and target AWS objects. M1 was the physical grunt work of learning exactly which IAM roles, VPC subnets, and container ports are required to make the cloud function. You built a single, highly engineered car.
     
 
-### Milestone 2 (M2): Platform Engineering (The Universal Functor)
+### Milestone 2 (M2): Platform Engineering (The Internal Developer Platform)
 
-**The Objective:** Abstract the localized logic of M1 into an **Internal Developer Platform (IDP)**.
+**The Objective:** Abstract the localized logic of M1 into an **Internal Developer Platform (IDP)** on AWS.
 
 - **The Execution:** You are no longer managing the flow of the document data; you are managing the flow of the software itself. You build a standardized, automated runway so that _any_ data scientist or developer can deploy their logic without needing to understand the underlying infrastructure. You are building the factory that mass-produces the cars.
+- **Second workload (sequenced after the golden-path is stable):** Regulated Payments Reconciliation Sandbox — a second application on the same IDP path, proving the platform is not a one-off for Covenant.
     
 
 ## Part II: The Phase 3 Refactor (Infrastructure as Code Abstraction)
@@ -67,7 +70,7 @@ When the module receives these variables, the platform automatically generates t
 
 ## Part III: The Phase 4 Refactor (Policy-as-Code & Security Axioms)
 
-A platform is useless if it allows developers to deploy vulnerable code. M2 requires injecting strict, automated mathematical constraints into the CI/CD pipeline (GitHub Actions) _before_ the code is allowed to reach the cloud environment.
+A platform is useless if it allows developers to deploy vulnerable code. M2 requires injecting strict, automated constraints into the CI/CD pipeline (GitHub Actions) _before_ the code is allowed to reach the cloud environment.
 
 ### 1. Infrastructure Axioms (`tfsec` / `checkov`)
 
@@ -80,16 +83,16 @@ Before the Terraform is executed (`terraform apply`), the pipeline runs a static
 
 ### 2. Software Axioms (`trivy`)
 
-Before the Docker container is pushed to the enterprise registry (ECR/ACR), the pipeline scans the physical container image.
+Before the Docker container is pushed to the enterprise registry (ECR; Azure Container Registry is contrast only, not a target), the pipeline scans the physical container image.
 
 - **The Constraint:** `trivy` scans the Python dependencies and the base OS layer for known vulnerabilities (CVEs). If a developer uses an outdated version of Pandas with a known memory leak, the build fails.
     
 - **The Value:** You guarantee that every object entering the cloud topology is structurally sound.
     
 
-## Part IV: Phase 5 (The Golden Path Template)
+## Part IV: The Golden Path Template
 
-This is the final abstraction. The end-user (the developer) should not even need to look at your Terraform modules or your CI/CD YAML files.
+This is the final abstraction. The end-user (the developer) should not even need to look at your Terraform modules or your CI/CD YAML files. The **golden-path** template is the self-service entry point.
 
 ### 1. The Template Repository
 
