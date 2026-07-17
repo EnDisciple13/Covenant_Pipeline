@@ -21,11 +21,23 @@ data "aws_iam_policy_document" "ecs_task_assume" {
 }
 
 data "aws_iam_policy_document" "s3files_sync_assume" {
+  # S3 Files trust principal is elasticfilesystem.amazonaws.com (not s3files.amazonaws.com).
   statement {
+    sid     = "AllowS3FilesAssumeRole"
     actions = ["sts:AssumeRole"]
     principals {
       type        = "Service"
-      identifiers = ["s3files.amazonaws.com"]
+      identifiers = ["elasticfilesystem.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values   = ["arn:aws:s3files:${var.aws_region}:${data.aws_caller_identity.current.account_id}:file-system/*"]
     }
   }
 }
@@ -120,15 +132,45 @@ data "aws_iam_policy_document" "s3files_sync_bucket" {
     sid    = "SyncDataBucket"
     effect = "Allow"
     actions = [
-      "s3:GetBucketLocation",
       "s3:ListBucket",
+      "s3:ListBucketVersions",
+      "s3:GetBucketLocation",
+      "s3:GetBucketVersioning",
+      "s3:AbortMultipartUpload",
+      "s3:ListMultipartUploadParts",
       "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:GetObjectTagging",
+      "s3:GetObjectVersionTagging",
       "s3:PutObject",
+      "s3:PutObjectTagging",
       "s3:DeleteObject",
+      "s3:DeleteObjectVersion",
     ]
     resources = [
       var.data_bucket_arn,
       "${var.data_bucket_arn}/*",
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
+
+  statement {
+    sid    = "SyncEventBridge"
+    effect = "Allow"
+    actions = [
+      "events:PutRule",
+      "events:DeleteRule",
+      "events:DescribeRule",
+      "events:PutTargets",
+      "events:RemoveTargets",
+      "events:ListTargetsByRule",
+    ]
+    resources = [
+      "arn:aws:events:${var.aws_region}:${data.aws_caller_identity.current.account_id}:rule/DO-NOT-DELETE-S3-Files*",
     ]
   }
 }

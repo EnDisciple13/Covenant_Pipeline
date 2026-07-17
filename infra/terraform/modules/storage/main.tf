@@ -41,9 +41,10 @@ resource "aws_vpc_security_group_ingress_rule" "mount_from_pipeline" {
 }
 
 resource "aws_s3files_mount_target" "this" {
-  for_each = toset(var.public_subnet_ids)
+  # count (not for_each on IDs): subnet IDs are unknown until apply; length is known (2 AZs).
+  count = length(var.public_subnet_ids)
 
   file_system_id  = aws_s3files_file_system.this.id
-  subnet_id       = each.value
+  subnet_id       = var.public_subnet_ids[count.index]
   security_groups = [aws_security_group.mount_target.id]
 }
