@@ -39,7 +39,7 @@ Build and operate the cloud path for the Covenant Pipeline **in order to learn t
 
 > **Design audit (2026-07-04):** all four blueprints reviewed pre-implementation; seven defects corrected in place — see each blueprint's *Design Audit Notes* section. Notable: Mountpoint-for-S3 is not Fargate-compatible (Phase 2), HTTPS/ACM requires an owned domain (Phases 2–4), the Terraform state backend needs out-of-band bootstrap (Phase 3), and the CI audit gate as specified is fixture-scoped, not release-scoped (Phase 4).
 >
-> **R06 update (2026-07-16):** Mountpoint-for-S3 / Fargate incompatibility remains a true *historical* defect. AWS now documents **S3 Files** volumes as fully supported on Fargate. Storage mechanism selection is **open** pending the Phase 2 grounded comparison (options: native S3 Files vs application-level S3 adapter). C3 scopes an adapter *if selected*; it does not pre-select one.
+> **R06 update (2026-07-16):** Mountpoint-for-S3 / Fargate incompatibility remains a true *historical* defect. AWS now documents **S3 Files** volumes as fully supported on Fargate. **Human Decision 1 closed 2026-07-16:** Andy ratified native S3 Files for the personal PoC because it preserves the frozen `/app/data` contract, avoids an application adapter, and keeps the learning work in the infrastructure layer. The application-level S3 adapter remains portability contrast only, not an implementation branch.
 
 ### Phase 1: Local Containerization
 
@@ -71,15 +71,15 @@ Design the AWS target topology that hosts the Phase 1 images: **ECR** (registry)
 
 - **Container registry:** Amazon ECR stores image digests for backend and frontend.
 - **Compute:** ECS Fargate runs tasks from those digests without managing VMs.
-- **Networking & IAM:** VPC, subnets, ALB, security groups; execution role (pull images / write logs) vs task role (app access to S3/secrets).
+- **Networking & IAM:** VPC, subnets, ALB, security groups; execution role (pull images / write logs) vs task role (S3 Files mount access / app AWS APIs).
 - **TLS:** ACM HTTPS requires an owned domain + DNS validation; when no domain exists, HTTP :80 PoC fallback is explicit.
 - **Personal PoC cost deviation:** public-subnet / no-NAT topology (see threat boundary below); enterprise variant remains private subnets + NAT.
 
-#### Storage comparison (scheduled; not decided)
+#### Storage selection (Human Decision 1 ratified 2026-07-16)
 
-**Compare** (a) native **S3 Files** volume preserving the existing file contract vs (b) **application-level S3 object adapter** (scoped as application work per C3), on: cost, teardown behavior, portability, learning value under A1/B1.
+**Selected:** native **S3 Files** volume preserving the existing `/app/data` file contract. The grounded comparison favored S3 Files for this personal PoC because it removes adapter code and contract migration, is natively supported on ECS Fargate, and exposes file-system/IAM/network/synchronization behavior directly in the A3 operating loop. The application-level S3 object adapter remains the more portable contrast, but its additional application work is deferred.
 
-Storage mechanism selection is **open** pending the Phase 2 grounded comparison. No storage mechanism is selected until the human ratification gate closes.
+**Ownership and teardown:** a versioned/encrypted general-purpose S3 data bucket is an enumerated persistent prerequisite outside the session-scoped main stack. The main stack owns the S3 Files file system, access point, mount targets, mount-target security group, and ECS volume wiring. Before destroy, synchronization health must show no pending exports or export failures; main-stack destroy removes the S3 Files resources while retaining the owned data bucket. The implementation plan must verify current prices against the `$5/month` stop rule before apply.
 
 #### Threat boundary: public-subnet / no-NAT (personal PoC)
 
@@ -93,7 +93,7 @@ Storage mechanism selection is **open** pending the Phase 2 grounded comparison.
 
 **After `apply`, verify (A3):** public IP count matches expectation (task ENIs + ALB, nothing else); direct requests to task ports from the internet time out; the security-group graph shows task ingress referencing only the ALB security group.
 
-**Andy role:** Supplies topology axioms (what must be reachable, what must stay private, what may be PoC-deviated); ratifies the public-subnet/no-NAT threat boundary and the open storage comparison schedule; validates idle-cost inventory, security-group ingress graph, and killed-task replacement observation on ECS — without claiming the E1 orchestration gap is closed.
+**Andy role:** Supplies topology axioms (what must be reachable, what must stay private, what may be PoC-deviated); ratifies the public-subnet/no-NAT threat boundary and the S3 Files persistence branch; validates idle-cost inventory, storage synchronization/ownership, security-group ingress graph, and killed-task replacement observation on ECS — without claiming the E1 orchestration gap is closed.
 
 **Operating-loop exit (A3):** Andy can name, for each Compose service, its AWS host object and which identity acts; explain the idle-cost inventory; verify the threat-boundary checks after apply; and destroy/recreate the topology unassisted. Observing Fargate replace a failed task is in scope; operating a full reconciliation control plane is not (see E1).
 
@@ -172,7 +172,7 @@ As phases land, populate spec-derived invariant candidates via `/invariant-propo
 
 ### Observable checklist (what Andy looks at after destroy)
 
-S3 buckets (data + any session-created), ECR images (lifecycle-bound), CloudWatch log groups, Secrets Manager secrets, public IPv4 addresses, load balancers, running ECS services/tasks, **and** the deliberately persistent state bucket.
+S3 buckets (the deliberately persistent data bucket + any session-created bucket), S3 Files file systems/access points/mount targets and synchronization health, ECR images (lifecycle-bound), CloudWatch log groups, Secrets Manager secrets, public IPv4 addresses, load balancers, running ECS services/tasks, **and** the deliberately persistent state bucket.
 
 ### Sourced unit prices (us-east-1 / US East, fetched 2026-07-16)
 

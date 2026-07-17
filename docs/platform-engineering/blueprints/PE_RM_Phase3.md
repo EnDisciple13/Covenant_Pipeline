@@ -54,11 +54,11 @@ inherited_invariants:
 
 ## I. Objective
 
-**Parent authority.** Declare the Phase 2 AWS topology in Terraform. Manual clicking in the console is prohibited for the main stack. AWS is the sole target provider (other clouds may be named only as contrast). Phase 1 is frozen as-built; this phase materializes the **corrected** Phase 2 PoC topology (public-subnet/no-NAT, HTTP :80, Nginx-preserving edge, digest-oriented images, open persistence gate).
+**Parent authority.** Declare the Phase 2 AWS topology in Terraform. Manual clicking in the console is prohibited for the main stack. AWS is the sole target provider (other clouds may be named only as contrast). Phase 1 is frozen as-built; this phase materializes the **corrected** Phase 2 PoC topology (public-subnet/no-NAT, HTTP :80, Nginx-preserving edge, digest-oriented images, native S3 Files persistence ratified by Human Decision 1 on 2026-07-16).
 
-**Andy role:** Supplies the teardown/ownership axioms for the state backend vs main stack; ratifies `plan` diffs before `apply`; validates that a second plan on unchanged code is empty after a clean apply, and that `destroy` leaves no unintended session-scoped billable resources.
+**Andy role:** Supplies the teardown/ownership axioms for persistent data/state buckets vs the session-scoped main stack; ratifies `plan` diffs before every apply; validates S3 Files synchronization health, an empty second plan after clean apply, and that `destroy` leaves no unintended session-scoped billable resources.
 
-**Operating-loop exit (A3):** Andy can run `plan → apply → observe → destroy → recreate` unassisted, explain what state records, why locking exists, and the teardown order (main stack first; state bucket emptied/deleted only when retiring the backend).
+**Operating-loop exit (A3):** Andy can run `plan → apply → observe → synchronization check → destroy → recreate` unassisted, explain what Terraform state records, why locking exists, how S3 Files synchronizes with its durable bucket, and why the persistent data/state buckets retire separately from the main stack.
 
 ### Math lens
 
@@ -72,7 +72,7 @@ inherited_invariants:
 
 | Candidate | Phase 3 body obligation | Gate |
 |-----------|-------------------------|------|
-| **11** (Phase 3 half — persistence-reproducibility) | Name branch-specific reset/artifact checks for *both* open persistence shapes without selecting either. Compose-acyclic half remains Phase 1 ownership. | **Conditional on Human Decision 1.** Eventual `/invariant-propose` + Human gate. Do **not** write candidate 11 into frontmatter. |
+| **11** (Phase 3 half — persistence-reproducibility) | For selected S3 Files: reset only the `/app/data/out` prefix, preserve and hash-check the public PDF fixture, rerun with the same declared configuration, verify the required artifact set/structural checks, and prove no undeclared local state. Compose-acyclic half remains Phase 1 ownership. | Human Decision 1 is closed; eventual `/invariant-propose` + Human gate still owns graduation. Do **not** write candidate 11 into frontmatter. |
 
 Frontmatter invariant `iac-topology-parity` remains tied to the corrected Phase 2 blueprint: every Phase 2 topology node maps to a named Terraform address; undeclared extras are prohibited.
 
@@ -85,7 +85,7 @@ Cursor must generate the following directory structure within the existing repos
 ├── infra/
 │   └── terraform/
 │       ├── main.tf                 # Root module: wires child modules together
-│       ├── variables.tf            # Input variables (region, digests, conditional persistence)
+│       ├── variables.tf            # Input variables (region, digests, persistent data-bucket ARN)
 │       ├── outputs.tf              # Exported values (ALB DNS, ECR URLs)
 │       ├── providers.tf            # AWS provider configuration
 │       ├── backend.tf              # Remote state: S3 + use_lockfile = true
@@ -111,7 +111,7 @@ Cursor must generate the following directory structure within the existing repos
 │           │   ├── main.tf
 │           │   ├── variables.tf
 │           │   └── outputs.tf
-│           └── storage/            # CONDITIONAL on Human 1 — both shapes specified, neither selected
+│           └── storage/            # Selected S3 Files file system, access point, mount targets, SG
 │               ├── main.tf
 │               ├── variables.tf
 │               └── outputs.tf
@@ -128,7 +128,7 @@ Cursor must generate the following directory structure within the existing repos
 
 **Purpose:** Initialize the Terraform runtime and persist state outside the developer laptop.
 
-- **Provider:** `hashicorp/aws` — pinned to a specific minor version in `versions.tf`
+- **Provider:** `hashicorp/aws` — pin a Review-verified minor **≥ 6.41.0** in `versions.tf`; v6.40 introduced S3 Files resources and v6.41 added ECS task-definition `s3files_volume_configuration` support ([AWS provider v6.40.0](https://github.com/hashicorp/terraform-provider-aws/releases/tag/v6.40.0); [v6.41.0](https://github.com/hashicorp/terraform-provider-aws/releases/tag/v6.41.0))
 - **Terraform version:** require **≥ 1.11.0** so `use_lockfile` is GA ([Terraform v1.11.0](https://github.com/hashicorp/terraform/releases/tag/v1.11.0); [CHANGELOG](https://github.com/hashicorp/terraform/blob/v1.11/CHANGELOG.md))
 - **Region:** Configurable via `var.aws_region` (default `us-east-1` for PoC)
 - **Remote backend (`backend.tf`):**
@@ -146,7 +146,7 @@ Cursor must generate the following directory structure within the existing repos
 | `backend_image_digest` | string | ECR digest for backend image (`sha256:…`) |
 | `frontend_image_digest` | string | ECR digest for frontend image (`sha256:…`) |
 | `domain_name` | string | Optional; unused in operative HTTP :80 PoC (TLS contrast) |
-| `persistence_mode` | string | **Conditional / gated** — set only after Human Decision 1; until then authoring stops before a runnable main-stack plan that materializes storage (`P3-PLAN-02`) |
+| `data_bucket_arn` | string | ARN of the versioned/encrypted persistent S3 data bucket created by the separately reviewed prerequisite/bootstrap surface |
 
 Do **not** use `backend_image_tag` / `frontend_image_tag` as deployment identity.
 
@@ -202,8 +202,9 @@ Do **not** use `backend_image_tag` / `frontend_image_tag` as deployment identity
 
 - `aws_iam_role` — `ecsTaskExecutionRole` (trust: `ecs-tasks.amazonaws.com`) — ECR pull, logs, secret retrieve for injection
 - `aws_iam_role_policy_attachment` — `AmazonECSTaskExecutionRolePolicy`
-- `aws_iam_role` — `ecsBackendTaskRole` / `ecsPipelineTaskRole` — app AWS APIs (S3 object and/or S3 Files perms **only after** Human 1 selects a branch)
-- `aws_iam_policy` — scoped permissions per role; do not pre-select storage IAM
+- `aws_iam_role` — `ecsBackendTaskRole` / `ecsPipelineTaskRole` — least-privilege S3 Files mount/read vs mount/read/write permissions
+- `aws_iam_role` — S3 Files synchronization role scoped to the persistent data bucket/prefix and required EventBridge synchronization actions
+- `aws_iam_policy` — scoped permissions per role; exact current actions verified during L3 Review
 
 **Outputs:** `task_execution_role_arn`, `backend_task_role_arn`, `pipeline_task_role_arn`
 
@@ -214,18 +215,20 @@ Do **not** use `backend_image_tag` / `frontend_image_tag` as deployment identity
 
 **Outputs:** `gemini_api_key_secret_arn`
 
-#### Module: `storage` (conditional on Human Decision 1)
+#### Module: `storage` (native S3 Files — Human Decision 1 ratified)
 
-Two **conditional** shapes — module list must not select storage:
+- `aws_s3files_file_system` — linked to `var.data_bucket_arn` through the synchronization role; use default AWS-owned KMS encryption for file-system data/metadata unless Review justifies a customer-managed key (bucket-object encryption is configured separately)
+- `aws_s3files_access_point` — application root with POSIX UID/GID verified against the actual backend image
+- `aws_s3files_mount_target` — one in each operative AZ/subnet (maximum one per AZ; local network path for both task placements)
+- `aws_security_group` — mount-target ingress TCP 2049 from backend/pipeline task SGs only; no public ingress
+- `aws_s3files_synchronization_configuration` only when non-default import/export settings are justified by the public-fixture workload; otherwise retain service defaults and monitor them
+- ECS task definitions use `s3files_volume_configuration`; backend mounts `/app/data` read-only and pipeline mounts `/app/data` read-write through the same access point. Task IAM roles and transit encryption are mandatory for S3 Files ECS volumes; ECS enforces transit encryption automatically.
 
-| Branch | Shape (when ratified) |
-|--------|------------------------|
-| (a) S3 Files | Volume / mount resources preserving the exact file contract; task-role S3 Files permissions |
-| (b) Adapter | S3 bucket + application-scoped sync contract; no silent path rewrite before ratification |
+**Persistent prerequisite boundary:** the versioned/encrypted general-purpose S3 data bucket is outside the session-scoped main stack and is supplied by `data_bucket_arn`. It must be created or adopted only through a separately reviewed prerequisite/bootstrap plan, then inventoried after every main-stack destroy. Do not hide it behind `prevent_destroy` inside a root that must complete `terraform destroy`.
 
-Until Human 1 closes: retain both shapes in the blueprint; **authoring stops before a runnable main-stack plan** that materializes either (`P3-PLAN-02`).
+**Synchronization and writer discipline:** the pipeline is the primary writer and backend is read-only for this PoC. Before destroy, retain evidence that `PendingExports = 0` and `ExportFailures = 0` (or the current equivalent metrics). Concurrent bucket-side and file-system-side writes to the same path are prohibited because S3 is authoritative on conflicts.
 
-**Outputs (when selected):** branch-specific bucket/volume identifiers
+**Outputs:** `s3files_file_system_arn`, `s3files_access_point_arn`, mount-target IDs, data-bucket ARN
 
 #### Root `main.tf` wiring
 
@@ -235,15 +238,15 @@ module "network"  { source = "./modules/network"  ... }
 module "ecr"      { source = "./modules/ecr"      ... }
 module "iam"      { source = "./modules/iam"      ... }
 module "secrets"  { source = "./modules/secrets"  ... }
-# module "storage" — only after Human Decision 1; both shapes specified above
+module "storage"  { source = "./modules/storage"  ... }
 module "ecs"      { source = "./modules/ecs"
-                    depends_on = [module.network, module.ecr, module.iam, module.secrets]
+                    depends_on = [module.network, module.ecr, module.iam, module.secrets, module.storage]
                     ... }
 ```
 
 **Topology parity:** Every corrected Phase 2 node → named Terraform address. Prohibit undeclared extras. State backend is **external** to the main-stack graph.
 
-**Reasoning:** Modular Terraform mirrors Phase 2 decomposition. `depends_on` encodes the directed dependency graph. Persistence stays gated so Human Decision 1 is not silently closed by module wiring.
+**Reasoning:** Modular Terraform mirrors Phase 2 decomposition. `depends_on` encodes the directed dependency graph. S3 Files preserves the frozen file contract while making persistence networking, IAM, synchronization, and teardown observable in the operating loop.
 
 ### Step C: Workflow (full A3 loop)
 
@@ -259,13 +262,14 @@ module "ecs"      { source = "./modules/ecs"
 6. **Smoke test** — use Terraform outputs (ALB DNS) per Phase 2 `P2-SMOKE-01` / `P2-THREAT-01` observations (reference; do not copy evidence rows into this register)
 7. **Observe** — idle-cost inventory; optional killed-task replacement observation (Phase 2 `P2-LOOP-01`; does not close E1)
 8. **Second unchanged plan** — expect `0` add / `0` change / `0` destroy (`P3-APPLY-01`)
-9. **`terraform destroy`** — main stack first
-10. **Post-destroy inventory** — no unintended session-scoped billable resources; enumerate persistent exceptions
-11. **Recreate** — next plan create-only; second unchanged plan returns to `0/0/0`
+9. **S3 Files synchronization gate** — `PendingExports = 0`, `ExportFailures = 0` (or current equivalent); stop on pending/failed synchronization
+10. **`terraform destroy`** — session-scoped main stack first; retain the separately owned data/state buckets
+11. **Post-destroy inventory** — no unintended session-scoped billable resources; enumerate persistent exceptions
+12. **Recreate** — next plan create-only; second unchanged plan returns to `0/0/0`
 
 **$5 stop rule:** If a typical practice session cannot fit the alerting threshold, **stop and route to Andy** — never silently loosen.
 
-**Teardown order:** main stack first; state bucket emptied/deleted only in a separate backend-retirement operation.
+**Teardown order:** synchronization-health gate → session-scoped main stack → inventory persistent data/state buckets. Either bucket is emptied/deleted only through its separately approved retirement operation.
 
 #### Drift policy
 
@@ -288,14 +292,18 @@ flowchart TD
   ecr["module.ecr\nRepositories"]
   iam["module.iam\nExec vs task roles"]
   secrets["module.secrets\nGEMINI_API_KEY"]
-  storage["module.storage\nCONDITIONAL Human 1"]
+  storage["module.storage\nS3 Files fs access point mount targets"]
+  dataBucket["persistent S3 data bucket\nexternal prerequisite"]
   ecs["module.ecs\nCluster Services Tasks"]
 
   network --> ecs
   ecr --> ecs
   iam --> ecs
   secrets --> ecs
-  storage -.->|"after Human 1"| ecs
+  dataBucket --> storage
+  network --> storage
+  iam --> storage
+  storage --> ecs
   iam --> ecr
 ```
 
@@ -306,7 +314,7 @@ flowchart TD
 - `terraform import` of existing resources
 - Multi-account AWS Organizations / cross-account IAM
 - Terraform Cloud / HCP Terraform (remote backend uses S3 + `use_lockfile` directly)
-- Storage mechanism **selection** (Human Decision 1)
+- Application-level S3 object adapter (portability contrast; not selected for this PoC)
 - Multi-environment PoC scaffolding (contrast only)
 
 ## VI. Phase 3 Prediction Register
@@ -315,14 +323,14 @@ Distinct from Phase 2. Do not merge registers. Do not copy Phase 2 prediction ev
 
 | ID | Before-the-run condition | Prediction stated in advance | Falsifier / evidence to retain |
 |---|---|---|---|
-| P3-VAL-01 | Terraform files are generated from the ratified blueprint and initialized with the Review-verified tool/provider versions (Terraform ≥ 1.11.0). | `terraform validate` exits `0`, emits its success result, and emits no error diagnostic. | Non-zero exit or any error diagnostic. Retain stdout/stderr and version output. |
-| P3-PLAN-01 | State backend exists out of band; main stack is absent; storage choice and all other Human decisions are ratified. | The initial saved plan reports a non-zero add count, `0` changes, and `0` destroys. It contains no DynamoDB lock table, no NAT Gateway/NAT EIP in the PoC branch, and no state-backend bucket owned by the main stack. | Any destroy, any prohibited resource, a backend bucket in the main graph, or a Phase 2 topology node without a Terraform address. Retain plan summary and address-to-topology matrix. |
-| P3-PLAN-02 | Storage choice remains unratified. | Authoring stops before a runnable main-stack plan; the blueprint retains two conditional persistence shapes and an open `[Human]` gate. | A runnable plan silently chooses or partly materializes either storage branch. Retain gate status and branch diff. |
+| P3-VAL-01 | Terraform files are generated from the ratified blueprint and initialized with Terraform ≥ 1.11.0 plus a Review-verified AWS provider ≥ 6.41.0. | `terraform validate` exits `0`, emits its success result, and emits no error diagnostic. | Non-zero exit or any error diagnostic. Retain stdout/stderr and version/provider-lock output. |
+| P3-PLAN-01 | State backend and persistent data bucket exist outside the session-scoped main stack; main stack is absent; all Human decisions are ratified. | The initial saved plan reports a non-zero add count, `0` changes, and `0` destroys. It contains no DynamoDB lock table, NAT Gateway/NAT EIP, state-backend bucket, or data bucket owned by the main stack. | Any destroy, prohibited resource, persistent bucket in the main graph, or Phase 2 topology node without a Terraform address. Retain plan summary and address-to-topology matrix. |
+| P3-PLAN-02 | Human Decision 1 ratified S3 Files and `data_bucket_arn` names the owned persistent bucket. | The runnable plan materializes exactly the selected S3 Files file system/access point/per-AZ mount targets/SG/task-volume wiring and contains no adapter implementation or path rewrite. | Missing/extra storage resource, adapter work, path rewrite, public NFS ingress, or unowned bucket. Retain storage-only plan JSON assertions and task-definition volume diff. |
 | P3-APPLY-01 | Human has reviewed the saved plan and apply completes without an out-of-band mutation. | A second unchanged plan reports `0` to add, `0` to change, and `0` to destroy. | Any non-zero diff absent a separately recorded drift event. Retain both plan summaries and apply result. |
 | P3-SMOKE-01 | Apply completed and the full pipeline output prerequisite holds. | Terraform output supplies the smoke-test entry value; the same root, `/api/document-data`, `/api/pdf`, direct-task-port, and threat-boundary observations specified in P2-SMOKE-01/P2-THREAT-01 pass without copying their evidence into the Phase 3 register. | Missing/incorrect output, failed ALB-path checks, successful direct task access, or a threat-boundary mismatch. Retain Phase 3 output-to-Phase 2 observation references. |
-| P3-DOWN-01 | `terraform destroy` runs against the main stack after smoke and observation. | Destroy completes successfully; a follow-up inventory finds no unintended session-scoped main-stack resources; the state bucket and only enumerated persistent exceptions remain. The state bucket is emptied/deleted only in a separate backend-retirement operation. | Destroy failure, residual unowned main-stack resource, missing persistent-exception record, or main destroy attempting to retire the backend. Retain destroy result and inventory. |
-| P3-RECREATE-01 | Main stack was cleanly destroyed while the backend remains valid. | The next plan again shows the expected create-only topology, and recreate followed by a second unchanged plan returns to `0/0/0`. | Missing resources, unexpected changes/destroys, or a non-empty unchanged plan without recorded drift. Retain recreate plan and second-plan result. |
-| P3-REPRO-01 | The selected persistence branch is reapplied to the same public fixture under the blueprint's declared reset conditions. | The run reproduces the declared artifact set/content checks required by candidate 11's Phase 3 half. **While Human 1 is open:** blueprint must name branch-specific reset/artifact checks for *both* branches without selecting either; concrete hashes/manifest bind after ratification. | Missing artifact, unexplained content difference, or dependence on undeclared local state. Retain artifact manifest/hash comparison as later specified after storage ratification. |
+| P3-DOWN-01 | S3 Files synchronization is healthy and `terraform destroy` runs against the session-scoped main stack after smoke and observation. | Destroy completes successfully; no file system/access point/mount target or other unintended main-stack resource remains; the enumerated data/state buckets and only other owned persistent exceptions remain. | Pending/failed synchronization, destroy failure, residual S3 Files/main-stack resource, missing persistent-exception record, or main destroy attempting to retire either bucket. Retain synchronization metrics, destroy result, and inventory. |
+| P3-RECREATE-01 | Main stack was cleanly destroyed while the state backend and persistent data bucket remain valid. | The next plan again shows the expected create-only topology, and recreate followed by a second unchanged plan returns to `0/0/0`. | Missing resources, unexpected changes/destroys, or a non-empty unchanged plan without recorded drift. Retain recreate plan and second-plan result. |
+| P3-REPRO-01 | S3 Files is recreated against the same persistent bucket; only `/app/data/out` was reset; the public PDF fixture hash and declared configuration are unchanged. | The pipeline reproduces the required artifact set; the fixture hash is unchanged; deterministic artifacts match their declared hashes where applicable; LLM-derived artifacts pass their declared schema/provenance checks rather than an invented byte-equality requirement; no undeclared local state is needed. | Missing artifact, changed fixture, failed deterministic hash or schema/provenance check, synchronization failure, or dependence on undeclared local state. Retain reset command/evidence, fixture hash, artifact manifest, and applicable comparisons. |
 
 ## VII. Design Audit Notes
 
@@ -337,4 +345,8 @@ External design review prior to implementation; corrections applied in place:
 
 ### 2026-07-16 (re-grounding)
 
-Re-grounded in place from parent [PE_Roadmap_M1.md](../PE_Roadmap_M1.md) and corrected [PE_RM_Phase2.md](PE_RM_Phase2.md) via implementation plan `inbox/2026-07-16-pe-blueprints-regrounding-l2-plan.md`: `use_lockfile` + TF ≥ 1.11.0; one PoC env path; digest variables; no NAT/EIP in PoC; Nginx-preserving edge; conditional storage modules; candidate 11 conditional on Human 1; full A3 workflow; distinct 8-row prediction register. Storage selection remains open.
+Re-grounded in place from parent [PE_Roadmap_M1.md](../PE_Roadmap_M1.md) and corrected [PE_RM_Phase2.md](PE_RM_Phase2.md) via implementation plan `inbox/2026-07-16-pe-blueprints-regrounding-l2-plan.md`: `use_lockfile` + TF ≥ 1.11.0; one PoC env path; digest variables; no NAT/EIP in PoC; Nginx-preserving edge; conditional storage modules; candidate 11 conditional on Human 1; full A3 workflow; distinct 8-row prediction register. At this Step 2 checkpoint, storage selection remained open.
+
+### 2026-07-16 (Human Decision 1 closure; post-Step-2 L2 re-entry)
+
+Andy ratified native S3 Files for the personal PoC. This separately attributed re-entry replaces conditional persistence with a concrete S3 Files module and ECS volume contract, establishes the persistent-data-bucket vs session-main-stack ownership boundary, raises the AWS-provider floor to the first ECS-capable S3 Files release, and compiles synchronization-safe destroy/reproducibility predictions. The application adapter remains contrast only; completed Step 2 evidence remains frozen.
