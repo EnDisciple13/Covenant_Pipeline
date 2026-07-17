@@ -53,9 +53,9 @@ Planning notes for the full platform arc live in [docs/platform-engineering/](do
 | Phase | Status | Summary |
 |-------|--------|---------|
 | **Phase 1: Local Containerization** | **Implemented** | Docker images + Docker Compose |
-| Phase 2: Cloud Topology (ECR/ECS, ACR/ACA) | Not implemented | Container registry, serverless compute, VPC |
-| Phase 3: Infrastructure as Code (Terraform) | Not implemented | Declarative cloud mapping |
-| Phase 4: CI/CD Orchestration | Not implemented | GitHub Actions, audit gate, image push, deploy |
+| Phase 2: Cloud Topology (ECR/ECS, ACR/ACA) | Scaffolded (pre-apply) | Terraform modules declare topology; not applied |
+| Phase 3: Infrastructure as Code (Terraform) | Scaffolded (pre-apply) | Dual-root Terraform under `infra/terraform/`; awaiting Human Gate B |
+| Phase 4: CI/CD Orchestration | Not implemented | Full deploy/audit gate deferred; L3 bootstrap workflow only |
 
 **Phase 1 deliverables:**
 
@@ -436,6 +436,32 @@ The following platform-engineering phases are planned in [PE_Roadmap_M1.md](docs
 | Kubernetes reconciliation loop | [Math_Notes_Platform_Engineer.md](../notes/math/Math_Notes_Platform_Engineer.md) | Not implemented |
 
 When Phase 2+ are built, images defined in this document become the deployable artifacts pushed to the cloud registry. Compose networking maps to VPC service discovery; the `./data` volume pattern maps to object storage (S3/Blob) or persistent volumes.
+
+# **Stage 3: Terraform / AWS as-built (pre-apply scaffold)**
+
+> Status: **pre-apply only** (Session 7a). No cloud mutation until Andy approves the exact bootstrap saved plan (Gate B). Phase rows above stay “Scaffolded” until mutations complete.
+
+## Operating contract
+
+- **Proof-space tree:** `infra/terraform/` (main) + `infra/terraform/bootstrap/` (persistent prerequisites) + `tests/terraform/` + `.github/workflows/build-push-poc.yml`.
+- **Selected storage:** native **S3 Files** (Human Decision 1). Persistent versioned/encrypted data bucket is bootstrap-owned; main owns FS/AP/MT/SG and ECS `/app/data` mounts (backend RO, pipeline RW).
+- **Images:** hosted GitHub Actions + OIDC (`aws-dev`) emit immutable digests; ECS consumes `repo@sha256:…` only.
+- **State:** S3 backend `covenant-tfstate-andy-568728209842` with `use_lockfile=true`. State bucket is OOB — never Terraform-owned in either root.
+- **Evidence:** local gitignored `infra/terraform/.evidence/<run-id>/manifest.json` (V2). P2 and P3 prediction registers stay separate; shared bytes referenced once.
+- **Operator guide:** [infra/terraform/README.md](infra/terraform/README.md).
+
+## Deviations from checked blueprints (tracked)
+
+| Blueprint text | As-built | Disposition |
+|----------------|----------|-------------|
+| Phase 3 single-root tree with `module.ecr` / `module.secrets` called from main | Dual-root: bootstrap sole create site for ECR + secret metadata; main consumes URLs/ARNs | Bounded Notes G2 ripple in `PE_RM_Phase3.md` |
+| Blueprint state bucket name placeholder `covenant-pipeline-tfstate-{account-id}` | As-built bucket `covenant-tfstate-andy-568728209842` | Documented; do not rename |
+| Phase 4 build/push interface uses tags + `environments/dev` | L3 adds `build-push-poc.yml` (digest-only, not Phase 4) | **X3-A deferred:** owner Andy; target `Notes/.../PE_RM_Phase4.md`; trigger after L3 closure and before any Phase 4 implementation; must consume immutable digests and explicitly compose, replace, or retire `build-push-poc.yml` |
+
+## Evidence pointers
+
+- PRECHECK / bootstrap plan hashes and redacted summaries: recorded in the L3 implementation plan status header (`WAITING-HUMAN-BOOTSTRAP-APPLY`).
+- V2 manifest SHA-256: *pending first cloud sitting*.
 
 # **Appendix**
 

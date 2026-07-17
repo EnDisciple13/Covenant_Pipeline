@@ -26,3 +26,20 @@ node_modules/
 out/
 data/
 *.log
+
+# Terraform (L3) — keep .terraform.lock.hcl
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfplan
+tfplan
+tfplan.json
+*.tfplan.json
+plan.json
+.evidence/
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

@@ -84,18 +84,22 @@ Cursor must generate the following directory structure within the existing repos
 / (Project Root)
 ├── infra/
 │   └── terraform/
-│       ├── main.tf                 # Root module: wires child modules together
-│       ├── variables.tf            # Input variables (region, digests, persistent data-bucket ARN)
-│       ├── outputs.tf              # Exported values (ALB DNS, ECR URLs)
+│       ├── main.tf                 # Main root: wires session-scoped modules (no ECR/secret create)
+│       ├── variables.tf            # Region, digests, data_bucket_arn, gemini_secret_arn, ECR URLs
+│       ├── outputs.tf              # Exported values (ALB DNS, service names)
 │       ├── providers.tf            # AWS provider configuration
-│       ├── backend.tf              # Remote state: S3 + use_lockfile = true
+│       ├── backend.tf              # Remote state: S3 + use_lockfile = true (key env/poc/terraform.tfstate)
 │       ├── versions.tf             # Terraform ≥ 1.11.0 and provider constraints
+│       ├── bootstrap/              # Persistent prerequisites root (separate state)
+│       │   ├── main.tf             # Sole create site: modules/ecr + modules/secrets + data bucket + OIDC push policy
+│       │   ├── backend.tf          # State key env/poc/bootstrap/terraform.tfstate
+│       │   └── environments/poc/terraform.tfvars
 │       ├── modules/
-│           ├── network/            # VPC, public subnets, IGW, ALB :80, SGs (no NAT/EIP in PoC)
+│           ├── network/            # VPC, public subnets, IGW, ALB :80, SGs, Service Connect namespace (no NAT/EIP in PoC)
 │           │   ├── main.tf
 │           │   ├── variables.tf
 │           │   └── outputs.tf
-│           ├── ecr/                # ECR repositories + lifecycle policies
+│           ├── ecr/                # ECR repositories + lifecycle policies (called only from bootstrap/)
 │           │   ├── main.tf
 │           │   ├── variables.tf
 │           │   └── outputs.tf
@@ -103,11 +107,11 @@ Cursor must generate the following directory structure within the existing repos
 │           │   ├── main.tf
 │           │   ├── variables.tf
 │           │   └── outputs.tf
-│           ├── iam/                # Execution role vs task roles
+│           ├── iam/                # Execution role vs task roles (+ S3 Files sync role)
 │           │   ├── main.tf
 │           │   ├── variables.tf
 │           │   └── outputs.tf
-│           ├── secrets/            # Secrets Manager for GEMINI_API_KEY
+│           ├── secrets/            # Secrets Manager metadata for GEMINI_API_KEY (called only from bootstrap/)
 │           │   ├── main.tf
 │           │   ├── variables.tf
 │           │   └── outputs.tf
@@ -119,6 +123,8 @@ Cursor must generate the following directory structure within the existing repos
 │           └── poc/
 │               └── terraform.tfvars    # ONE PoC environment/state path (Human 4)
 ```
+
+**Two-root ownership (G2):** bootstrap owns ECR×2, the persistent versioned/encrypted data bucket, and persistent Secrets Manager **metadata** (no secret value). Main consumes `backend_repository_url`, `frontend_repository_url`, `data_bucket_arn`, and `gemini_secret_arn` as inputs and must not call `modules/ecr` or `modules/secrets` as create sites. The state bucket remains OOB.
 
 **Contrast only (non-operative):** multi-environment scaffolding (`environments/dev` + `environments/prod`) may be named as an enterprise pattern; it is **not** the PoC target (Human 4 ratified).
 
@@ -146,7 +152,10 @@ Cursor must generate the following directory structure within the existing repos
 | `backend_image_digest` | string | ECR digest for backend image (`sha256:…`) |
 | `frontend_image_digest` | string | ECR digest for frontend image (`sha256:…`) |
 | `domain_name` | string | Optional; unused in operative HTTP :80 PoC (TLS contrast) |
-| `data_bucket_arn` | string | ARN of the versioned/encrypted persistent S3 data bucket created by the separately reviewed prerequisite/bootstrap surface |
+| `data_bucket_arn` | string | ARN of the versioned/encrypted persistent S3 data bucket created by the separately reviewed bootstrap root |
+| `gemini_secret_arn` | string | ARN of the persistent Secrets Manager secret **metadata** created by bootstrap (value written OOB; never in Terraform state) |
+| `backend_repository_url` | string | ECR repository URL from bootstrap (main does not create ECR) |
+| `frontend_repository_url` | string | ECR repository URL from bootstrap |
 
 Do **not** use `backend_image_tag` / `frontend_image_tag` as deployment identity.
 
@@ -234,14 +243,21 @@ Do **not** use `backend_image_tag` / `frontend_image_tag` as deployment identity
 
 ```hcl
 # Conceptual wiring (design-level — not committed HCL)
+# bootstrap/main.tf (persistent prerequisites; separate state)
+module "ecr"     { source = "../modules/ecr"     ... }  # sole ECR create site
+module "secrets" { source = "../modules/secrets" ... }  # sole secret-metadata create site
+# + data bucket + narrowly scoped OIDC ECR-push policy on unmanaged deploy role
+
+# main root (session-scoped topology)
 module "network"  { source = "./modules/network"  ... }
-module "ecr"      { source = "./modules/ecr"      ... }
 module "iam"      { source = "./modules/iam"      ... }
-module "secrets"  { source = "./modules/secrets"  ... }
 module "storage"  { source = "./modules/storage"  ... }
 module "ecs"      { source = "./modules/ecs"
-                    depends_on = [module.network, module.ecr, module.iam, module.secrets, module.storage]
+                    depends_on = [module.network, module.iam, module.storage]
+                    # consumes backend_repository_url, frontend_repository_url,
+                    # data_bucket_arn, gemini_secret_arn, digests as variables
                     ... }
+# main does not call module.ecr or module.secrets
 ```
 
 **Topology parity:** Every corrected Phase 2 node → named Terraform address. Prohibit undeclared extras. State backend is **external** to the main-stack graph.
