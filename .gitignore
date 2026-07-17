@@ -35,7 +35,9 @@ crash.log
 crash.*.log
 *.tfplan
 tfplan
+tfplan-*
 tfplan.json
+tfplan-*.json
 *.tfplan.json
 plan.json
 .evidence/
