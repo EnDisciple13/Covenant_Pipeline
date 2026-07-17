@@ -199,16 +199,16 @@ S3 buckets (the deliberately persistent data bucket + any session-created bucket
 - Frontend mem/hr = `0.5 × 0.000001235 × 3600` = **$0.002223**
 - **Fargate services subtotal ≈ $0.037 / hour**
 
-**Rough deployed floor (public-subnet PoC, before LCU / logs / transfer / pipeline run-task):**
+**Rough deployed floor (public-subnet PoC, before S3 Files high-performance storage/data access, underlying S3 storage/requests, LCU, logs, transfer, and pipeline run-task):**
 
 - Fargate services ≈ $0.037
 - ALB ≈ $0.0225 / partial hour
 - Public IPv4: 2 task ENIs + 2-AZ ALB ≈ 4 × $0.005 = **$0.020**
 - **Floor ≈ $0.080 / hour**
 
-**Feasibility vs $5 ceiling:** A 1-hour practice session at the floor is ~$0.08 before LCU/logs/transfer/pipeline; five such sessions ≈ $0.40 plus small persistent ECR/S3/Secrets/state-bucket charges. **Fits the $5 alerting ceiling under short sessions + teardown.** If Andy runs multi-hour always-on stacks without destroy, the floor reaches $5 in ~62 hours of continuous deploy — treat that as a discipline failure, not a reason to raise the ceiling. NAT Gateway (~$35/month class) remains **out of scope for personal PoC** (use public-subnet deviation + threat-boundary writeup).
+**Feasibility vs $5 ceiling:** A 1-hour practice session at the floor is ~$0.08 before S3 Files/S3, LCU, logs, transfer, and pipeline-run charges; five such sessions ≈ $0.40 plus small persistent ECR, data-bucket, state-bucket, and Secrets charges. **Fits the $5 alerting ceiling under short sessions + teardown only after the omitted S3 Files/S3 components are estimated for the actual fixture.** If Andy runs multi-hour always-on stacks without destroy, the floor reaches $5 in ~62 hours of continuous deploy — treat that as a discipline failure, not a reason to raise the ceiling. NAT Gateway (~$35/month class) remains **out of scope for personal PoC** (use public-subnet deviation + threat-boundary writeup).
 
-**Persistent exceptions:** Terraform state S3 bucket (owned; teardown-last); optional retained ECR images under lifecycle policy; Secrets Manager secret if not deleted between sessions (prefer delete-or-accept $0.40/mo prorated); CloudWatch log groups if retention > 0.
+**Persistent exceptions:** Terraform state S3 bucket (owned; teardown-last); S3 Files data S3 bucket (owned; retained across main-stack destroy and retired separately); optional retained ECR images under lifecycle policy; Secrets Manager secret if not deleted between sessions (prefer delete-or-accept $0.40/mo prorated); CloudWatch log groups if retention > 0.
 
 ## M1 exit — E1 orchestration gap (E1(c) ratified)
 

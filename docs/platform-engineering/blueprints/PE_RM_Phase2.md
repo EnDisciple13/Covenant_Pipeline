@@ -249,6 +249,7 @@ Private subnets for ECS tasks + NAT Gateway (or VPC endpoints) for egress + TLS/
 - **`ecsTaskExecutionRole`:** ECR pull, CloudWatch Logs write, Secrets Manager retrieve for injection
 - **`ecsBackendTaskRole`:** scoped S3 Files mount/read permissions
 - **`ecsPipelineTaskRole`:** scoped S3 Files mount/read/write permissions; no Secrets Manager *application* read required when injection uses the execution role
+- **`s3FilesSyncRole`:** S3 Files service trust; scoped synchronization access to the owned data bucket/prefix and required EventBridge actions
 
 **Reasoning:** Least privilege — execution role retrieves secrets for injection; task role is what the application assumes. No task receives blanket `s3:*`.
 

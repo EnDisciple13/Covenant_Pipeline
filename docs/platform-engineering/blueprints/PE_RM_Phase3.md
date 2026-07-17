@@ -206,7 +206,7 @@ Do **not** use `backend_image_tag` / `frontend_image_tag` as deployment identity
 - `aws_iam_role` — S3 Files synchronization role scoped to the persistent data bucket/prefix and required EventBridge synchronization actions
 - `aws_iam_policy` — scoped permissions per role; exact current actions verified during L3 Review
 
-**Outputs:** `task_execution_role_arn`, `backend_task_role_arn`, `pipeline_task_role_arn`
+**Outputs:** `task_execution_role_arn`, `backend_task_role_arn`, `pipeline_task_role_arn`, `s3_files_sync_role_arn`
 
 #### Module: `secrets`
 
@@ -220,7 +220,7 @@ Do **not** use `backend_image_tag` / `frontend_image_tag` as deployment identity
 - `aws_s3files_file_system` — linked to `var.data_bucket_arn` through the synchronization role; use default AWS-owned KMS encryption for file-system data/metadata unless Review justifies a customer-managed key (bucket-object encryption is configured separately)
 - `aws_s3files_access_point` — application root with POSIX UID/GID verified against the actual backend image
 - `aws_s3files_mount_target` — one in each operative AZ/subnet (maximum one per AZ; local network path for both task placements)
-- `aws_security_group` — mount-target ingress TCP 2049 from backend/pipeline task SGs only; no public ingress
+- `aws_security_group` — mount-target ingress TCP 2049 from backend/pipeline task SGs only; no public ingress. AWS specifies that compute resources reach S3 Files mount targets over NFS port 2049 ([mounting S3 Files on compute](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-files-attach-compute.html)); the optional ECS `transitEncryptionPort` does not replace this mount-target rule.
 - `aws_s3files_synchronization_configuration` only when non-default import/export settings are justified by the public-fixture workload; otherwise retain service defaults and monitor them
 - ECS task definitions use `s3files_volume_configuration`; backend mounts `/app/data` read-only and pipeline mounts `/app/data` read-write through the same access point. Task IAM roles and transit encryption are mandatory for S3 Files ECS volumes; ECS enforces transit encryption automatically.
 
