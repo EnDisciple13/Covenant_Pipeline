@@ -356,7 +356,7 @@ External design review prior to implementation; corrections applied in place, ma
 
 ### 2026-07-16 (re-grounding)
 
-Re-grounded in place from parent [PE_Roadmap_M1.md](../PE_Roadmap_M1.md) (R06 storage comparison was open at this Step 2 checkpoint; public-subnet/no-NAT threat boundary; HTTP :80 operative; Nginx `/api/*` ownership; digest-oriented ECR; execution-role vs task-role; candidate 9 ALB-status vs schema-valid split) via implementation plan `inbox/2026-07-16-pe-blueprints-regrounding-l2-plan.md`.
+Re-grounded in place from parent [PE_Roadmap_M1.md](../PE_Roadmap_M1.md) (R06 storage comparison was open at this Step 2 checkpoint; public-subnet/no-NAT threat boundary; HTTP :80 operative; Nginx `/api/*` ownership; digest-oriented ECR; execution-role vs task-role; candidate 9 ALB-status vs schema-valid split) via implementation plan `inbox/_processed/2026-07-16-pe-blueprints-regrounding-l2-plan.md`.
 
 ### 2026-07-16 (Human Decision 1 closure; post-Step-2 L2 re-entry)
 

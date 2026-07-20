@@ -361,7 +361,7 @@ External design review prior to implementation; corrections applied in place:
 
 ### 2026-07-16 (re-grounding)
 
-Re-grounded in place from parent [PE_Roadmap_M1.md](../PE_Roadmap_M1.md) and corrected [PE_RM_Phase2.md](PE_RM_Phase2.md) via implementation plan `inbox/2026-07-16-pe-blueprints-regrounding-l2-plan.md`: `use_lockfile` + TF ≥ 1.11.0; one PoC env path; digest variables; no NAT/EIP in PoC; Nginx-preserving edge; conditional storage modules; candidate 11 conditional on Human 1; full A3 workflow; distinct 8-row prediction register. At this Step 2 checkpoint, storage selection remained open.
+Re-grounded in place from parent [PE_Roadmap_M1.md](../PE_Roadmap_M1.md) and corrected [PE_RM_Phase2.md](PE_RM_Phase2.md) via implementation plan `inbox/_processed/2026-07-16-pe-blueprints-regrounding-l2-plan.md`: `use_lockfile` + TF ≥ 1.11.0; one PoC env path; digest variables; no NAT/EIP in PoC; Nginx-preserving edge; conditional storage modules; candidate 11 conditional on Human 1; full A3 workflow; distinct 8-row prediction register. At this Step 2 checkpoint, storage selection remained open.
 
 ### 2026-07-16 (Human Decision 1 closure; post-Step-2 L2 re-entry)
 
